@@ -1,0 +1,26 @@
+body {
+	margin: 0px;
+}
+
+#titleBar {
+	background:url(titleBar.png) repeat-x;
+	height: 50px;
+}
+
+#titleBar > #titleBarWrap {
+	width: 500px;
+	margin: 0px auto;
+	height: 50px;
+}
+
+#titleBar > #titleBarWrap > #titleBarLogo {
+	float: left;
+	height: 50px;
+	width: 50px;
+}
+
+#sidebar {
+	float: right;
+	background:url(sidebar.png) repeat-y;
+	width: 50px
+}
