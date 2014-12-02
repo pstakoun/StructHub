@@ -50,7 +50,7 @@
 		
 		<div id = "sidebar">
 			<a href="#">Home</a>
-			<a href="#">Settings</a>
+			<a href="settings.php">Settings</a>
 		</div>
 	</body>
 </html>
