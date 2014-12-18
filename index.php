@@ -14,7 +14,8 @@
 			</div>
 		</div>
 		
-		<div id = "primaryFeed">
+		<div id="primaryFeed">
+		<div id="primaryFeed">
 			<?php
 				$primaryfeed = "news"/*check database for primary feed*/;
 				switch($primaryfeed) {
@@ -31,7 +32,7 @@
 			?>
 		</div>
 		
-		<div id = "secondaryFeed">
+		<div id="secondaryFeed">
 			<?php
 				$secondaryfeed = "chat"/*check database for secondary feed*/;
 				switch($primaryfeed) {
@@ -48,7 +49,7 @@
 			?>
 		</div>
 		
-		<div id = "sidebar">
+		<div id="sidebar">
 			<a href="#">Home</a>
 			<a href="settings.php">Settings</a>
 		</div>
