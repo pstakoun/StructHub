@@ -15,7 +15,6 @@
 		</div>
 		
 		<div id="primaryFeed">
-		<div id="primaryFeed">
 			<?php
 				$primaryfeed = "news"/*check database for primary feed*/;
 				switch($primaryfeed) {
