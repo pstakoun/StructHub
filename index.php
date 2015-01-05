@@ -22,7 +22,7 @@
 						include_once("newsfeed.php");
 						break;
 					case "chat":
-						include_once("chatfeed.php");
+						include_once("messagefeed.php");
 						break;
 					default:
 						include_once("newsfeed.php");
@@ -33,16 +33,16 @@
 		
 		<div id="secondaryFeed">
 			<?php
-				$secondaryfeed = "chat"/*check database for secondary feed*/;
+				$secondaryfeed = "messages"/*check database for secondary feed*/;
 				switch($primaryfeed) {
 					case "news":
 						include_once("newsfeed.php");
 						break;
 					case "chat":
-						include_once("chatfeed.php");
+						include_once("messagefeed.php");
 						break;
 					default:
-						include_once("chatfeed.php");
+						include_once("messagefeed.php");
 						//set secondary feed to chat
 				}
 			?>
@@ -50,6 +50,8 @@
 		
 		<div id="sidebar">
 			<a href="#">Home</a>
+			<a href="contacts.php">Contacts</a>
+			<a href="messaging.php">Messaging</a>
 			<a href="settings.php">Settings</a>
 		</div>
 	</body>
