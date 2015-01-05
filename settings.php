@@ -19,8 +19,8 @@
 		</div>
 		
 		<div id = "sidebar">
-			<a href="#">Home</a>
-			<a href="settings.php">Settings</a>
+			<a href="index.php">Home</a>
+			<a href="#">Settings</a>
 		</div>
 	</body>
 </html>
