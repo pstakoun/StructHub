@@ -10,7 +10,7 @@ body {
 #titleBar > #titleBarWrap {
 	width: 256px;
 	margin: 0px auto;
-	height: 50px;
+	height: 64px;
 }
 
 #titleBar > #titleBarWrap > #titleBarLogo {
