@@ -11,6 +11,9 @@
 				<div id="titleBarLogo">
 					<a href="index.php"><img src="images/logo.png"></a>
 				</div>
+                <div>
+                    <h1>Social Network</h1>
+                </div>
 			</div>
 		</div>
 		
@@ -21,7 +24,7 @@
 					case "news":
 						include_once("newsfeed.php");
 						break;
-					case "chat":
+					case "messages":
 						include_once("messagefeed.php");
 						break;
 					default:
@@ -38,7 +41,7 @@
 					case "news":
 						include_once("newsfeed.php");
 						break;
-					case "chat":
+					case "messages":
 						include_once("messagefeed.php");
 						break;
 					default:
