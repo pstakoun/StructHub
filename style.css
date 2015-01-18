@@ -1,30 +1,48 @@
 body {
 	margin: 0px;
+    background-color: black;
 }
 
 h1 {
-    font-family: Consolas, monaco, monospace;
+    font-family: Consolas, monaco, monospace; font-size: 24px;
+    color: darkred;
+}
+
+a {
+    text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 16px;
+    color: darkred;
 }
 
 #titleBar {
-	background:url(titleBar.png) repeat-x;
-	height: 64px;
+	background-color: black;
+	height: 48px;
 }
 
 #titleBar > #titleBarWrap {
-	width: 256px;
+	width: 272px;
 	margin: 0px auto;
-	height: 64px;
+	height: 48px;
+    line-height: 48px;
 }
 
 #titleBar > #titleBarWrap > #titleBarLogo {
 	float: left;
-	height: 64px;
-	width: 64px;
+	height: 48px;
+	width: 48px;
+    margin-right: 12px;
 }
 
 #sidebar {
 	float: right;
-	background:url(sidebar.png) repeat-y;
-	width: 64px
+    margin-left: 8px;
+	width: 100px;
+}
+
+#primaryFeed {
+    background-color: lightgray;
+}
+
+#secondaryFeed {
+    background-color: lightgray;
 }

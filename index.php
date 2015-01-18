@@ -9,7 +9,7 @@
 		<div id="titleBar">
 			<div id="titleBarWrap">
 				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png"></a>
+					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
                     <h1>Social Network</h1>
@@ -52,9 +52,9 @@
 		</div>
 		
 		<div id="sidebar">
-			<a href="#">Home</a>
-			<a href="contacts.php">Contacts</a>
-			<a href="messaging.php">Messaging</a>
+			<a href="#">Home</a><br>
+			<a href="contacts.php">Contacts</a><br>
+			<a href="messaging.php">Messaging</a><br>
 			<a href="settings.php">Settings</a>
 		</div>
 	</body>

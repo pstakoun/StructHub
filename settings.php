@@ -9,8 +9,11 @@
 		<div id="titleBar">
 			<div id="titleBarWrap">
 				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png"></a>
+					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
+                <div>
+                    <h1><a href="index.php">Social Network</a></h1>
+                </div>
 			</div>
 		</div>
 		
