@@ -1,6 +1,6 @@
 body {
 	margin: 0px;
-    background-color: black;
+    background-color: #181818;
 }
 
 h1 {
@@ -15,7 +15,6 @@ a {
 }
 
 #titleBar {
-	background-color: black;
 	height: 48px;
 }
 
