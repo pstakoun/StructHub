@@ -34,19 +34,17 @@ h1 {
 }
 
 #content > #feeds {
+    float: left;
+    height: 150%;
     width: 800px;
     background-color: lightgray;
 }
 
 #content > #feeds > #primaryFeed {
-    /*float: left;*/
-    /*display: inline-block;*/
     width: 480px;
 }
 
 #content > #feeds > #secondaryFeed {
-    /*float: left;*/
-    /*display: inline-block;*/
     width: 320px;
 }
 
