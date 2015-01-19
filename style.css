@@ -8,14 +8,8 @@ h1 {
     color: darkred;
 }
 
-a {
-    text-decoration: none;
-    font-family: Consolas, monaco, monospace; font-size: 16px;
-    color: darkred;
-}
-
 #titleBar {
-	height: 48px;
+	height: 64px;
 }
 
 #titleBar > #titleBarWrap {
@@ -32,16 +26,37 @@ a {
     margin-right: 12px;
 }
 
-#sidebar {
-	float: right;
-    margin-left: 8px;
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    height: 150%;
+    width: 924px;
+}
+
+#content > #feeds {
+    width: 800px;
+    background-color: lightgray;
+}
+
+#content > #feeds > #primaryFeed {
+    /*float: left;*/
+    /*display: inline-block;*/
+    width: 480px;
+}
+
+#content > #feeds > #secondaryFeed {
+    /*float: left;*/
+    /*display: inline-block;*/
+    width: 320px;
+}
+
+#content > #sidebar {
+    float: right;
 	width: 100px;
 }
 
-#primaryFeed {
-    background-color: lightgray;
-}
-
-#secondaryFeed {
-    background-color: lightgray;
+#nav {
+    text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 16px;
+    color: darkred;
 }

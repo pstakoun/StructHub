@@ -22,10 +22,10 @@
 		</div>
 		
 		<div id = "sidebar">
-			<a href="index.php">Home</a>
-			<a href="contacts.php">Contacts</a>
-			<a href="messaging.php">Messaging</a>
-			<a href="#">Settings</a>
+			<a id ="nav" href="index.php">Home</a>
+			<a id ="nav" href="contacts.php">Contacts</a>
+			<a id ="nav" href="messaging.php">Messaging</a>
+			<a id ="nav" href="#">Settings</a>
 		</div>
 	</body>
 </html>
