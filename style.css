@@ -22,9 +22,6 @@ h2 {
 }
 
 #titleBar > #titleBarWrap {
-	/* Maybe change to:
-	 * width: auto;
-	 */
 	width: 512px;
     margin-left: auto;
     margin-right: auto;
@@ -44,7 +41,7 @@ h2 {
     margin-right: auto;
     padding-bottom: 16px;
     height: 150%;
-    width: 924px;
+    width: 952px;
 }
 
 #content > #feeds {
@@ -75,6 +72,12 @@ h2 {
 
 #nav {
     text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: darkred;
+    line-height: 32px;
+}
+
+#label {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: darkred;
     line-height: 32px;
