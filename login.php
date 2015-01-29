@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Social Network</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	
+	<body>
+		<div id="titleBar">
+			<div id="titleBarWrap">
+				<div id="titleBarLogo">
+					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
+				</div>
+                <div>
+                    <h1>Social Network</h1>
+                </div>
+			</div>
+		</div>
+		
+		<div id = "login">
+			<!-- Login form -->
+		</div>
+	</body>
+</html>
