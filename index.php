@@ -31,7 +31,7 @@
                                 break;
                             default:
                                 include_once("newsfeed.php");
-                                //set primary feed to news
+                                //set primary feed to news (in database)
                         }
                     ?>
                 </div>
