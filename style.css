@@ -22,6 +22,9 @@ h2 {
 }
 
 #titleBar > #titleBarWrap {
+	/* Maybe change to:
+	 * width: auto;
+	 */
 	width: 512px;
     margin-left: auto;
     margin-right: auto;
@@ -67,7 +70,7 @@ h2 {
     position: absolute;
     right: 0px;
     top: 0px;
-	width: 100px;
+	width: 128px;
 }
 
 #nav {
