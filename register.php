@@ -51,12 +51,12 @@
 		<div id="register">
             <?php echo($errorMessage); ?>
 			<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-                <p id="label">First Name: <input type="text" name = "firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></p>
-                <p id="label">Last Name: <input type="text" name = "lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></p>
-                <p id="label">Email: <input type="email" name = "email" value="<?php if (!empty($email)) { echo($email); } ?>" /></p>
-                <p id="label">Password: <input type="password" name = "password" /></p>
-                <p id="label">Confirm Password: <input type="password" name = "confirmpassword" /></p>
-                <p id="label"><input type="submit" name = "register" value = "Register" /></p>
+                <p id="label">First Name: <input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></p>
+                <p id="label">Last Name: <input type="text" name="lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></p>
+                <p id="label">Email: <input type="email" name="email" value="<?php if (!empty($email)) { echo($email); } ?>" /></p>
+                <p id="label">Password: <input type="password" name="password" /></p>
+                <p id="label">Confirm Password: <input type="password" name="confirmpassword" /></p>
+                <p id="label"><input type="submit" name="register" value="Register" /></p>
             </form>
 		</div>
         <?php } else { ?>

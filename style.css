@@ -50,6 +50,7 @@ h2 {
 #content > #updateStatus > #statusText {
     width: 800px;
     min-height: 64px;
+    max-height: 256px;
     resize: vertical;
 }
 

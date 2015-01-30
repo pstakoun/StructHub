@@ -37,9 +37,9 @@
 		<div id="login">
             <?php if (!empty($errorMessage)) { echo($errorMessage); } ?>
             <form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-                <p id="label">Email: <input type="email" name = "email" /></p>
-                <p id="label">Password: <input type="password" name = "password" /></p>
-                <p id="label"><input type="submit" name = "login" value = "Login" /></p>
+                <p id="label">Email: <input type="email" name="email" /></p>
+                <p id="label">Password: <input type="password" name="password" /></p>
+                <p id="label"><input type="submit" name="login" value="Login" /></p>
             </form>
 		</div>
 	</body>

@@ -4,6 +4,13 @@
         header("Location: login.php");
         die();
     }
+    if (isset($_POST["statusUpdate"])) {
+        $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
+        // Find user in database
+        if (!(ctype_space($statusUpdate) || $statusUpdate == "")) {
+            // Post $statusUpdate (add to database)
+        }
+    }
 ?>
 
 <html>
@@ -26,9 +33,9 @@
 		</div>
 		
         <div id="content">
-            <form id="updateStatus" method="post" action="updatestatus.php">
-                <textarea id="statusText"></textarea><br>
-                <input type="submit" name = "login" value = "Post Status Update" />
+            <form id="updateStatus" method="post" action="#">
+                <textarea id="statusText" name="statusUpdate" placeholder="Enter status update..."></textarea><br>
+                <input type="submit" name="postStatusUpdate" value="Post" />
             </form>
             
             <div id="feeds">
