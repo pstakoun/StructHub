@@ -1,3 +1,11 @@
+<?php
+    session_start();
+    if (!isset($_SESSION["id"])) {
+        header("Location: login.php");
+        die();
+    }
+?>
+
 <html>
 	<head>
 		<meta charset="UTF-8">
@@ -18,6 +26,11 @@
 		</div>
 		
         <div id="content">
+            <form id="updateStatus" method="post" action="updatestatus.php">
+                <textarea id="statusText"></textarea><br>
+                <input type="submit" name = "login" value = "Post Status Update" />
+            </form>
+            
             <div id="feeds">
                 <div id="primaryFeed">
                     <?php
@@ -39,7 +52,7 @@
                 <div id="secondaryFeed">
                     <?php
                         $secondaryfeed = "messages"/*check database for secondary feed*/;
-                        switch($primaryfeed) {
+                        switch($secondaryfeed) {
                             case "news":
                                 include_once("newsfeed.php");
                                 break;

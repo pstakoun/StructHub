@@ -17,15 +17,18 @@
 			</div>
 		</div>
 		
-		<div id = "settings">
-			<!-- Settings form -->
-		</div>
-		
-		<div id = "sidebar">
-			<a id ="nav" href="index.php">Home</a>
-			<a id ="nav" href="#">Contacts</a>
-			<a id ="nav" href="messaging.php">Messaging</a>
-			<a id ="nav" href="settings.php">Settings</a>
-		</div>
+        <div id="content">
+            <div id = "contacts">
+                <!-- Display contacts -->
+            </div>
+            
+            <div id = "sidebar">
+                <a id ="nav" href="index.php">Home</a><br>
+                <a id ="nav" href="#">Contacts</a><br>
+                <a id ="nav" href="messaging.php">Messaging</a><br>
+                <a id ="nav" href="settings.php">Settings</a>
+            </div>
+        </div>
+        
 	</body>
 </html>

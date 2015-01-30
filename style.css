@@ -1,6 +1,7 @@
 body {
 	margin: 0px;
     background-color: #181818;
+    /*background-color: #222222;*/
 }
 
 h1 {
@@ -13,7 +14,9 @@ h1 {
 h2 {
     font-family: Consolas, monaco, monospace; font-size: 32px;
     color: #181818;
+    /*color: #222222;*/
     margin: 0px;
+    text-align: center;
 }
 
 #titleBar {
@@ -44,6 +47,12 @@ h2 {
     width: 952px;
 }
 
+#content > #updateStatus > #statusText {
+    width: 800px;
+    min-height: 64px;
+    resize: vertical;
+}
+
 #content > #feeds {
     position: relative;
     height: 100%;
@@ -70,6 +79,18 @@ h2 {
 	width: 128px;
 }
 
+#register {
+    width: 512;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#login {
+    width: 512;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #nav {
     text-decoration: none;
     font-family: Consolas, monaco, monospace; font-size: 18px;
@@ -80,5 +101,11 @@ h2 {
 #label {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: darkred;
+    line-height: 32px;
+}
+
+#error {
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: red;
     line-height: 32px;
 }

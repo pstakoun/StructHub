@@ -15,19 +15,19 @@
                 $password = htmlspecialchars($_POST["password"]);
                 $confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
                 // Validate name
-                if (!(ctype_alpha($firstname) && ctype_alpha($firstname))) {
+                if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
                     $postValid = False;
-                    $errorMessage = "Name invalid.";
+                    $errorMessage = "<p id=\"error\">Name invalid.<p>";
                 // Validate email
                 } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $postValid = False;
-                    $errorMessage = "Email invalid.";
+                    $errorMessage = "<p id=\"error\">Email invalid.<p>";
                 } else if (strlen($password) < 6) {
                     $postValid = False;
-                    $errorMessage = "Password too short.";
+                    $errorMessage = "<p id=\"error\">Password too short.<p>";
                 } else if ($password != $confirmpassword) {
                     $postValid = False;
-                    $errorMessage = "Passwords do not match.";
+                    $errorMessage = "<p id=\"error\">Passwords do not match.<p>";
                 }
             }
         ?>
@@ -46,21 +46,21 @@
 		</div>
 		
         <?php
-            if (!$postValid) { 
-            echo($errorMessage);
+            if (!$postValid) {
         ?>
 		<div id="register">
+            <?php echo($errorMessage); ?>
 			<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-                <p id="label">First Name: <input type="text" name = "firstname" /></p>
-                <p id="label">Last Name: <input type="text" name = "lastname" /></p>
-                <p id="label">Email: <input type="email" name = "email" /></p>
+                <p id="label">First Name: <input type="text" name = "firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></p>
+                <p id="label">Last Name: <input type="text" name = "lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></p>
+                <p id="label">Email: <input type="email" name = "email" value="<?php if (!empty($email)) { echo($email); } ?>" /></p>
                 <p id="label">Password: <input type="password" name = "password" /></p>
                 <p id="label">Confirm Password: <input type="password" name = "confirmpassword" /></p>
                 <p id="label"><input type="submit" name = "register" value = "Register" /></p>
             </form>
 		</div>
         <?php } else { ?>
-            <p>Registration successful! A confirmation email has been sent to <?php echo $email; ?>.</p>
+            <p id="label">Registration successful! A confirmation email has been sent to <?php echo $email; ?>.</p>
         <?php } ?>
 	</body>
 </html>
