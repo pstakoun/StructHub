@@ -6,7 +6,6 @@
     }
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
-        // Find user in database
         if (!(ctype_space($statusUpdate) || $statusUpdate == "")) {
             // Post $statusUpdate (add to database)
         }
