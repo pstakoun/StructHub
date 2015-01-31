@@ -1,7 +1,6 @@
 body {
 	margin: 0px;
-    background-color: #181818;
-    /*background-color: #222222;*/
+    background-color: lightgray;
 }
 
 h1 {
@@ -14,14 +13,14 @@ h1 {
 h2 {
     font-family: Consolas, monaco, monospace; font-size: 32px;
     color: #181818;
-    /*color: #222222;*/
     margin: 0px;
     text-align: center;
 }
 
 #titleBar {
-    margin: 0px;
+    margin-bottom: 16px;
 	height: 64px;
+    background-color: #181818;
 }
 
 #titleBar > #titleBarWrap {
@@ -58,7 +57,6 @@ h2 {
     position: relative;
     height: 100%;
     width: 800px;
-    background-color: lightgray;
 }
 
 #content > #feeds > #primaryFeed {
@@ -78,6 +76,7 @@ h2 {
     right: 0px;
     top: 0px;
 	width: 128px;
+    height: inherit;
 }
 
 #register {
@@ -95,18 +94,21 @@ h2 {
 #nav {
     text-decoration: none;
     font-family: Consolas, monaco, monospace; font-size: 18px;
-    color: darkred;
+    color: #181818;
+    font-weight: bold;
     line-height: 32px;
 }
 
 #label {
     font-family: Consolas, monaco, monospace; font-size: 18px;
-    color: darkred;
+    color: #181818;
+    font-weight: bold;
     line-height: 32px;
 }
 
 #error {
     font-family: Consolas, monaco, monospace; font-size: 18px;
-    color: red;
+    color: darkred;
+    font-weight: bold;
     line-height: 32px;
 }
