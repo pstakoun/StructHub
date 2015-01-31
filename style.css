@@ -108,7 +108,7 @@ h2 {
 
 #error {
     font-family: Consolas, monaco, monospace; font-size: 18px;
-    color: darkred;
+    color: #C50000;
     font-weight: bold;
     line-height: 32px;
 }
