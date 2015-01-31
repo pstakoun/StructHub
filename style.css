@@ -80,13 +80,13 @@ h2 {
 }
 
 #register {
-    width: 512;
+    width: 512px;
     margin-left: auto;
     margin-right: auto;
 }
 
 #login {
-    width: 512;
+    width: 512px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -110,5 +110,10 @@ h2 {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: darkred;
     font-weight: bold;
+    line-height: 32px;
+}
+
+#link {
+    font-family: Consolas, monaco, monospace; font-size: 12px;
     line-height: 32px;
 }
