@@ -2,16 +2,29 @@
     session_start();
     if (isset($_SESSION["id"])) {
         header("Location: index.php");
-            die();
+		die();
     } else if (!empty($_POST)) {
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
-        // Find user in database
-        if (True) {
-            $_SESSION["id"] = 0; // Get id from database
+		// Initialize user id
+		$userId = null;
+		// Connect to database
+		$connection = mysql_connect("host", "user", "password")
+			or $errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+		mysql_select_db("database")
+			or $errorMessage = ("<p id=\"error\">Could not select database.<p>");
+		// Get user id from database
+		$query = "SELECT id FROM users WHERE email = " + $email + " AND password = " + $password;
+		$userId = mysql_query($query)
+			or $errorMessage = "<p id=\"error\">Email or password invalid.<p>";
+		// Check for user id
+        if ($userId != null) {
+            $_SESSION["id"] = $userId;
             header("Location: index.php");
             die();
-        }
+        } else {
+			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
+		}
     }
 ?>
 
