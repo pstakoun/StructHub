@@ -14,7 +14,8 @@
 		// Get user id from database
 		$sql = "SELECT id FROM users WHERE email = \"" + $email + "\" AND password = \"" + $password + "\"";
 		$result = $connection->query($sql);
-		if ($result->num_rows == 0) {
+		
+		if (empty($result)/*->num_rows == 0*/) {
 			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
 		// Set user id
 		} else {
