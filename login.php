@@ -7,7 +7,7 @@
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
 		// Connect to database
-		$connection = new mysqli_connect("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
+		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
 		if ($connection->connect_error) {
 			$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
 		}
