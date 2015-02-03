@@ -6,25 +6,23 @@
     } else if (!empty($_POST)) {
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
-		// Initialize user id
-		$userId = null;
 		// Connect to database
-		$connection = mysql_connect("host", "user", "password")
-			or $errorMessage = "<p id=\"error\">Could not connect to database.<p>";
-		mysql_select_db("database")
-			or $errorMessage = ("<p id=\"error\">Could not select database.<p>");
+		$connection = new mysqli_connect("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
+		if ($connection->connect_error) {
+			$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+		}
 		// Get user id from database
-		$query = "SELECT id FROM users WHERE email = " + $email + " AND password = " + $password;
-		$userId = mysql_query($query)
-			or $errorMessage = "<p id=\"error\">Email or password invalid.<p>";
-		// Check for user id
-        if ($userId != null) {
-            $_SESSION["id"] = $userId;
+		$sql = "SELECT id FROM users WHERE email = \"" + $email + "\" AND password = \"" + $password + "\"";
+		$result = $conn->query($sql);
+		if ($result->num_rows == 0) {
+			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
+		// Set user id
+		} else {
+			$row = $result->fetch_assoc();
+            $_SESSION["id"] = $row["id"];
             header("Location: index.php");
             die();
-        } else {
-			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
-		}
+        }
     }
 ?>
 

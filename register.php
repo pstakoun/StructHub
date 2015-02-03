@@ -68,9 +68,25 @@
 					<p id="label"><input type="submit" name="register" value="Register" /></p>
 				</form>
 
-			<?php } else { ?>
-				<p id="label">Registration successful! A confirmation email has been sent to <?php echo $email; ?>.</p>
-			<?php } ?>
+			<?php } else {
+				// Connect to database
+				$connection = new mysqli_connect("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
+				if ($connection->connect_error) {
+					$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+				}
+				
+				// Create query
+				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" + $id + "\", \"" + $firstname + "\", \"" + $lastname + "\", \"" + $email + "\", \"" + $password + "\")";
+
+				if (!$conn->query($sql)) {
+					$errorMessage = "<p id=\"error\">Database error.<p>";
+				}
+				if (!empty($errorMessage)) {
+					echo($errorMessage);
+				} else {
+					echo("<p id=\"label\">Registration successful! A confirmation email has been sent to " + $email + ".</p>");
+				}
+			} ?>
 		</div>
 	</body>
 </html>
