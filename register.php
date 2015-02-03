@@ -70,7 +70,7 @@
 
 			<?php } else {
 				// Connect to database
-				$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
+				$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 				if ($connection->connect_error) {
 					$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
 				}
@@ -78,7 +78,7 @@
 				// Create query
 				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" + $id + "\", \"" + $firstname + "\", \"" + $lastname + "\", \"" + $email + "\", \"" + $password + "\")";
 
-				if (!$conn->query($sql)) {
+				if (!$connection->query($sql)) {
 					$errorMessage = "<p id=\"error\">Database error.<p>";
 				}
 				if (!empty($errorMessage)) {

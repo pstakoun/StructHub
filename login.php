@@ -7,13 +7,13 @@
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
 		// Connect to database
-		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "users");
+		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 		if ($connection->connect_error) {
 			$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
 		}
 		// Get user id from database
 		$sql = "SELECT id FROM users WHERE email = \"" + $email + "\" AND password = \"" + $password + "\"";
-		$result = $conn->query($sql);
+		$result = $connection->query($sql);
 		if ($result->num_rows == 0) {
 			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
 		// Set user id
