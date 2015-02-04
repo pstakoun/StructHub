@@ -28,7 +28,7 @@
 					if ($connection->connect_error) {
 						$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
 					}
-					$sql = "SELECT * FROM users WHERE email = \"" . $email;
+					$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
 					
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {

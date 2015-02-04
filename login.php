@@ -14,7 +14,7 @@
 		}
 		
 		// Get user id from database
-		$sql = "SELECT * FROM users WHERE email = \"" . $email;
+		$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
 		$result = $connection->query($sql);
 		
 		if (empty($result)) {
