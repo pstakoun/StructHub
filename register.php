@@ -6,12 +6,14 @@
 		<link rel="stylesheet" href="style.css">
 		<?php
 			session_start();
+			
 			if (isset($_SESSION["id"])) {
 				header("Location: index.php");
 				die();
 			} else {
 				$postValid = True;
 				$errorMessage = "";
+				
 				if (empty($_POST)) {
 					$postValid = False;
 				} else {
@@ -20,6 +22,14 @@
 					$email = htmlspecialchars($_POST["email"]);
 					$password = htmlspecialchars($_POST["password"]);
 					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
+					
+					// Connect to database
+					$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+					if ($connection->connect_error) {
+						$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+					}
+					$sql = "SELECT * FROM users WHERE email = \"" . $email;
+					
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
 						$postValid = False;
@@ -36,6 +46,9 @@
 					} else if ($password != $confirmpassword) {
 						$postValid = False;
 						$errorMessage = "<p id=\"error\">Passwords do not match.<p>";
+					} else if ($connection->query($sql)) {
+						$postValid = False;
+						$errorMessage = "<p id=\"error\">Email in use.<p>";
 					}
 				}
 			}
@@ -69,22 +82,25 @@
 				</form>
 
 			<?php } else {
-				// Connect to database
-				$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
-				if ($connection->connect_error) {
-					$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+				// Ensure id is unique
+				$id = uniqid("", true);
+				$sql = "SELECT * FROM users WHERE id = \"" . $id;
+				while ($connection->query($sql)) {
+					$id = uniqid("", true);
 				}
 				
+				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
+				
 				// Create query
-				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" + $id + "\", \"" + $firstname + "\", \"" + $lastname + "\", \"" + $email + "\", \"" + $password + "\")";
+				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
 
 				if (!$connection->query($sql)) {
-					$errorMessage = "<p id=\"error\">Database error.<p>";
+					if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Database error.<p>"; }
 				}
 				if (!empty($errorMessage)) {
 					echo($errorMessage);
 				} else {
-					echo("<p id=\"label\">Registration successful! A confirmation email has been sent to " + $email + ".</p>");
+					echo("<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>");
 				}
 			} ?>
 		</div>

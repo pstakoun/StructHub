@@ -6,23 +6,29 @@
     } else if (!empty($_POST)) {
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
+		
 		// Connect to database
 		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 		if ($connection->connect_error) {
 			$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
 		}
+		
 		// Get user id from database
-		$sql = "SELECT id FROM users WHERE email = \"" + $email + "\" AND password = \"" + $password + "\"";
+		$sql = "SELECT * FROM users WHERE email = \"" . $email;
 		$result = $connection->query($sql);
 		
-		if (empty($result)/*->num_rows == 0*/) {
-			$errorMessage = "<p id=\"error\">Email or password invalid.<p>";
+		if (empty($result)) {
+			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.<p>"; }
 		// Set user id
 		} else {
 			$row = $result->fetch_assoc();
-            $_SESSION["id"] = $row["id"];
-            header("Location: index.php");
-            die();
+			if (password_verify($password, $row["password"])) {
+				$_SESSION["id"] = $row["id"];
+				header("Location: index.php");
+				die();
+			} else {
+				if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.<p>"; }
+			}
         }
     }
 ?>
