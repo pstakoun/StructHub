@@ -84,7 +84,7 @@
 			<?php } else {
 				// Ensure id is unique
 				$id = uniqid("", true);
-				$sql = "SELECT * FROM users WHERE id = \"" . $id;
+				$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
 				while ($connection->query($sql)) {
 					$id = uniqid("", true);
 				}
