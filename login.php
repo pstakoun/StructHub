@@ -10,7 +10,7 @@
 		// Connect to database
 		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 		if ($connection->connect_error) {
-			$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+			$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 		}
 		
 		// Get user id from database
@@ -18,7 +18,7 @@
 		$result = $connection->query($sql);
 		
 		if (empty($result)) {
-			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.<p>"; }
+			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
 		// Set user id
 		} else {
 			$row = $result->fetch_assoc();
@@ -27,7 +27,7 @@
 				header("Location: index.php");
 				die();
 			} else {
-				if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.<p>"; }
+				if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
 			}
         }
     }

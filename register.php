@@ -10,7 +10,7 @@
 			// Connect to database
 			$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 			if ($connection->connect_error) {
-				$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+				$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 			}
 			
 			if (isset($_SESSION["id"])) {
@@ -35,22 +35,22 @@
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
 						$postValid = False;
-						$errorMessage = "<p id=\"error\">Name invalid.<p>";
+						$errorMessage = "<p id=\"error\">Name invalid.</p>";
 					// Validate email
 					} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email invalid.<p>";
+						$errorMessage = "<p id=\"error\">Email invalid.</p>";
 					// Validate password
 					} else if (strlen($password) < 6) {
 						$postValid = False;
-						$errorMessage = "<p id=\"error\">Password too short.<p>";
+						$errorMessage = "<p id=\"error\">Password too short.</p>";
 					// Validate password confirmation
 					} else if ($password != $confirmpassword) {
 						$postValid = False;
-						$errorMessage = "<p id=\"error\">Passwords do not match.<p>";
+						$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
 					} else if ($result->num_rows != 0) {
 						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email in use.<p>";
+						$errorMessage = "<p id=\"error\">Email in use.</p>";
 					}
 				}
 			}
@@ -99,7 +99,7 @@
 				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
 
 				if (!$connection->query($sql)) {
-					if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Database error.<p>"; }
+					if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Database error.</p>"; }
 				}
 				if (!empty($errorMessage)) {
 					echo($errorMessage);

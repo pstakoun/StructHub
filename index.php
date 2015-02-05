@@ -9,7 +9,7 @@
 	// Connect to database
 	$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
 	if ($connection->connect_error) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
 	
 	// Set up feeds
@@ -21,9 +21,20 @@
 	
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
-        if (!(ctype_space($statusUpdate) || empty($statusUpdate))) {
-            // Post $statusUpdate (add to database)
-        }
+        if (!(empty($statusUpdate) || ctype_space($statusUpdate))) {
+            // Create query
+			$sql = "INSERT INTO updates (status, posterid) VALUES (\"" . $statusUpdate . "\", \"" . $id . "\")";
+			
+			if (!$connection->query($sql)) {
+				if (empty($errorMessage)) {
+					$errorMessage = "<p id=\"error\">Database error.</p>";
+				}
+			} else {
+				$postMessage = "<p id=\"label\">Status update successful.</p>";
+			}
+        } else if (empty($errorMessage)) {
+			$errorMessage = "<p id=\"error\">Please enter a valid status update.</p>";
+		}
     }
 ?>
 
@@ -49,6 +60,15 @@
 		
         <div id="content">
             <form id="updateStatus" method="post" action="#">
+				<?php
+					if (empty($errorMessage)) {
+						if (!empty($postMessage)) {
+							echo($postMessage);
+						}
+					} else {
+						echo($errorMessage);
+					}
+				?>
                 <textarea id="statusText" name="statusUpdate" placeholder="Enter status update..."></textarea><br>
                 <input type="submit" name="postStatusUpdate" value="Post" />
             </form>
