@@ -7,6 +7,12 @@
 		<?php
 			session_start();
 			
+			// Connect to database
+			$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+			if ($connection->connect_error) {
+				$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+			}
+			
 			if (isset($_SESSION["id"])) {
 				header("Location: index.php");
 				die();
@@ -23,12 +29,8 @@
 					$password = htmlspecialchars($_POST["password"]);
 					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
 					
-					// Connect to database
-					$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
-					if ($connection->connect_error) {
-						$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
-					}
 					$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
+					$result = $connection->query($sql);
 					
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
@@ -46,7 +48,7 @@
 					} else if ($password != $confirmpassword) {
 						$postValid = False;
 						$errorMessage = "<p id=\"error\">Passwords do not match.<p>";
-					} else if ($connection->query($sql)) {
+					} else if ($result->num_rows != 0) {
 						$postValid = False;
 						$errorMessage = "<p id=\"error\">Email in use.<p>";
 					}
@@ -82,10 +84,12 @@
 				</form>
 
 			<?php } else {
+			
 				// Ensure id is unique
 				$id = uniqid("", true);
 				$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
-				while ($connection->query($sql)) {
+				$result = $connection->query($sql);
+				while ($result->num_rows != 0) {
 					$id = uniqid("", true);
 				}
 				
