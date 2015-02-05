@@ -31,6 +31,6 @@
 	echo("<h2>News</h2>");
 	
 	foreach ($news as $status) {
-		echo("<p id=\"status\"> " . $status . " </p>")
+		echo("<p id=\"status\"> " . $status . " </p>");
 	}
 ?>
