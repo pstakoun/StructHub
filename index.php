@@ -4,6 +4,21 @@
         header("Location: login.php");
         die();
     }
+	$id = $_SESSION["id"];
+	
+	// Connect to database
+	$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+	if ($connection->connect_error) {
+		$errorMessage = "<p id=\"error\">Could not connect to database.<p>";
+	}
+	
+	// Set up feeds
+	$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+	$result = $connection->query($sql);
+	$row = $result->fetch_assoc();
+	$primaryfeed = $row["primaryfeed"];
+	$secondaryfeed = $row["secondaryfeed"];
+	
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
         if (!(ctype_space($statusUpdate) || $statusUpdate == "")) {
@@ -41,7 +56,6 @@
             <div id="feeds">
                 <div id="primaryFeed">
                     <?php
-                        $primaryfeed = "news"/*check database for primary feed*/;
                         switch($primaryfeed) {
                             case "news":
                                 include_once("newsfeed.php");
@@ -50,15 +64,13 @@
                                 include_once("messagefeed.php");
                                 break;
                             default:
-                                include_once("newsfeed.php");
-                                //set primary feed to news (in database)
+                                echo($errorMessage);
                         }
                     ?>
                 </div>
 
                 <div id="secondaryFeed">
                     <?php
-                        $secondaryfeed = "messages"/*check database for secondary feed*/;
                         switch($secondaryfeed) {
                             case "news":
                                 include_once("newsfeed.php");
@@ -67,8 +79,7 @@
                                 include_once("messagefeed.php");
                                 break;
                             default:
-                                include_once("messagefeed.php");
-                                //set secondary feed to chat
+                                echo($errorMessage);
                         }
                     ?>
                 </div>
