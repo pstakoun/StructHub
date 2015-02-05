@@ -21,7 +21,7 @@
 	
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
-        if (!(ctype_space($statusUpdate) || $statusUpdate == "")) {
+        if (!(ctype_space($statusUpdate) || empty($statusUpdate))) {
             // Post $statusUpdate (add to database)
         }
     }
