@@ -27,14 +27,14 @@
 		</div>
 		
         <div id="content">
-            <div id = "contacts">
-                <!-- Display contacts -->
+            <div id = "profile">
+                <!-- Display profile -->
             </div>
             
             <div id = "sidebar">
                 <a id ="nav" href="index.php">Home</a><br>
-				<a id ="nav" href="profile.php">Profile</a><br>
-                <a id ="nav" href="#">Contacts</a><br>
+				<a id ="nav" href="#">Profile</a><br>
+                <a id ="nav" href="contacts.php">Contacts</a><br>
                 <a id ="nav" href="messaging.php">Messaging</a><br>
                 <a id ="nav" href="settings.php">Settings</a>
             </div>
