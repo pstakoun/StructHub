@@ -4,6 +4,7 @@
         header("Location: login.php");
         die();
     }
+	$id = $_SESSION["id"];
 ?>
 
 <!DOCTYPE HTML>
@@ -28,7 +29,21 @@
 		
         <div id="content">
             <div id = "profile">
-                <!-- Display profile -->
+                <?php
+					// Connect to database
+					$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+					if ($connection->connect_error) {
+						$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
+					}
+					
+					// Get user information
+					$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+					$result = $connection->query($sql);
+					$row = $result->fetch_assoc();
+					$firstname = $row["firstname"];
+					$lastname = $row["lastname"];
+					$email = $row["email"];
+				?>
             </div>
             
             <div id = "sidebar">
