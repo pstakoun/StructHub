@@ -7,12 +7,12 @@
 	
 	// Get contacts
 	$contacts = [];
-	$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\"";
+	$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
 	$result = $connection->query($sql);
 	while ($row = $result->fetch_assoc()) {
 		$contacts[] = $row["user2"];
 	}
-	$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\"";
+	$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\" AND status = 2";
 	$result = $connection->query($sql);
 	while ($row = $result->fetch_assoc()) {
 		$contacts[] = $row["user1"];
@@ -35,7 +35,7 @@
 		$result = $connection->query($sql);
 		$row = $result->fetch_assoc();
 		$name = $row["firstname"] . " " . $row["lastname"];
-		echo("<p id=\"poster\">" . $name . "</p>");
+		echo("<p id=\"contact\">" . $name . "</p>");
 		echo("<p id=\"status\">" . $status["status"] . "</p>");
 	}
 ?>
