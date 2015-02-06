@@ -24,13 +24,18 @@
 		$sql = "SELECT * FROM updates WHERE posterid = \"" . $contact . "\"";
 		$result = $connection->query($sql);
 		while ($row = $result->fetch_assoc()) {
-			$news[] = $row["status"];
+			$news[] = $row;
 		}
 	}
 	
 	echo("<h2>News</h2>");
 	
 	foreach ($news as $status) {
-		echo("<p id=\"status\"> " . $status . " </p>");
+		$sql = "SELECT * FROM users WHERE id = \"" . $status["posterid"] . "\"";
+		$result = $connection->query($sql);
+		$row = $result->fetch_assoc();
+		$name = $row["firstname"] . " " . $row["lastname"];
+		echo("<p id=\"poster\">" . $name . "</p>");
+		echo("<p id=\"status\">" . $status["status"] . "</p>");
 	}
 ?>
