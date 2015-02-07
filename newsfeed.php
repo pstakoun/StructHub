@@ -35,7 +35,9 @@
 		$result = $connection->query($sql);
 		$row = $result->fetch_assoc();
 		$name = $row["firstname"] . " " . $row["lastname"];
-		echo("<p id=\"contact\">" . $name . "</p>");
-		echo("<p id=\"status\">" . $status["status"] . "</p>");
+		echo("<div id=\"statusUpdate\">");
+			echo("<a id=\"contact\" href=\"index.php\">" . $name . "</a>");
+			echo("<p id=\"status\">" . $status["status"] . "</p>");
+		echo("</div>");
 	}
 ?>

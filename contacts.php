@@ -55,7 +55,7 @@
 						$result = $connection->query($sql);
 						$row = $result->fetch_assoc();
 						$name = $row["firstname"] . " " . $row["lastname"];
-						echo("<p id=\"contact\">" . $name . "</p>");
+						echo("<a id=\"contact\" href=\"index.php\">" . $name . "</a>");
 					}
 					
 				?>

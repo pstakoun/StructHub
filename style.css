@@ -25,6 +25,7 @@ h2 {
 
 #titleBar > #titleBarWrap {
 	width: 512px;
+	text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
@@ -34,7 +35,6 @@ h2 {
 	height: 48px;
 	width: 48px;
     margin-top: 8px;
-    margin-right: 24px;
 }
 
 #content {
@@ -116,4 +116,26 @@ h2 {
 #link {
     font-family: Consolas, monaco, monospace; font-size: 12px;
     line-height: 32px;
+}
+
+#statusUpdate {
+    background-color: white;
+	margin-top: 16px;
+	padding: 8px;
+	border: 1px solid;
+	border-color: gray;
+	border-radius: 5px;
+}
+
+#contact {
+    text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: #181818;
+    font-weight: bold;
+}
+
+#status {
+    font-family: Consolas, monaco, monospace; font-size: 14px;
+    color: #181818;
+    font-weight: 500;
 }

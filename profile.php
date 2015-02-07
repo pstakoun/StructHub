@@ -43,6 +43,9 @@
 					$firstname = $row["firstname"];
 					$lastname = $row["lastname"];
 					$email = $row["email"];
+					
+					echo("<h2>" . $firstname . " " . $lastname . "</h2>");
+					echo("<p id=\"label\">Email: " . $email . "</p>");
 				?>
             </div>
             
