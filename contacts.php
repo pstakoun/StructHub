@@ -49,13 +49,19 @@
 					while ($row = $result->fetch_assoc()) {
 						$contacts[] = $row["user1"];
 					}
-					
+				?>
+					<form method="post" action="search.php">
+						<p id="label">Find Contact: <input type="text" name="query" />
+						<input type="hidden" name="type" value="user" />
+						<input type="submit" name="search" value="Search" /></p>
+					</form>
+				<?php
 					foreach ($contacts as $contact) {
 						$sql = "SELECT * FROM users WHERE id = \"" . $contact . "\"";
 						$result = $connection->query($sql);
 						$row = $result->fetch_assoc();
 						$name = $row["firstname"] . " " . $row["lastname"];
-						echo("<a id=\"contact\" href=\"index.php\">" . $name . "</a>");
+						echo("<a id=\"user\" href=\"index.php\">" . $name . "</a>");
 					}
 					
 				?>
