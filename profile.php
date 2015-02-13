@@ -37,9 +37,15 @@
 					}
 					
 					// Get user information
-					$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
-					$result = $connection->query($sql);
-					$row = $result->fetch_assoc();
+					//$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+					$sql = "SELECT * FROM users WHERE id = ?";
+					//$result = $connection->query($sql);
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $id);
+					$stmt->execute();
+					$result = $stmt->get_result();
+					//$row = $result->fetch_assoc();
+					$row = $result->fetch_array();
 					$firstname = $row["firstname"];
 					$lastname = $row["lastname"];
 					$email = $row["email"];

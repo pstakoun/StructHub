@@ -37,18 +37,30 @@
 						$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 					}
 					
-					// Get contacts
-					$contacts = [];
-					$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
-					$result = $connection->query($sql);
-					while ($row = $result->fetch_assoc()) {
-						$contacts[] = $row["user2"];
-					}
-					$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\" AND status = 2";
-					$result = $connection->query($sql);
-					while ($row = $result->fetch_assoc()) {
-						$contacts[] = $row["user1"];
-					}
+						// Get contacts
+						$contacts = [];
+						//$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
+						$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 2";
+						//$result = $connection->query($sql);
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
+						$stmt->execute();
+						$result = $stmt->get_result();
+						//while ($row = $result->fetch_assoc()) {
+						while ($row = $result->fetch_array()) {
+							$contacts[] = $row["user2"];
+						}
+						//$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\" AND status = 2";
+						$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 2";
+						//$result = $connection->query($sql);
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
+						$stmt->execute();
+						$result = $stmt->get_result();
+						//while ($row = $result->fetch_assoc()) {
+						while ($row = $result->fetch_array()) {
+							$contacts[] = $row["user1"];
+						}
 				?>
 					<form method="post" action="search.php">
 						<p id="label">Search for user: <input type="text" name="query" />
@@ -57,9 +69,15 @@
 					</form>
 				<?php
 					foreach ($contacts as $contact) {
-						$sql = "SELECT * FROM users WHERE id = \"" . $contact . "\"";
-						$result = $connection->query($sql);
-						$row = $result->fetch_assoc();
+						//$sql = "SELECT * FROM users WHERE id = \"" . $contact . "\"";
+						$sql = "SELECT * FROM users WHERE id = ?";
+						//$result = $connection->query($sql);
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $contact);
+						$stmt->execute();
+						$result = $stmt->get_result();
+						//$row = $result->fetch_assoc();
+						$row = $result->fetch_array();
 						$name = $row["firstname"] . " " . $row["lastname"];
 						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
 					}

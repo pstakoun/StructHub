@@ -13,9 +13,15 @@
 	}
 	
 	// Set up feeds
-	$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
-	$result = $connection->query($sql);
-	$row = $result->fetch_assoc();
+	//$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+	$sql = "SELECT * FROM users WHERE id = ?";
+	//$result = $connection->query($sql);
+	$stmt = $connection->prepare($sql);
+	$stmt->bind_param("s", $id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	//$row = $result->fetch_assoc();
+	$row = $result->fetch_array();
 	$primaryfeed = $row["primaryfeed"];
 	$secondaryfeed = $row["secondaryfeed"];
 	
@@ -23,15 +29,17 @@
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
         if (!(empty($statusUpdate) || ctype_space($statusUpdate))) {
             // Create query
-			$sql = "INSERT INTO updates (status, posterid) VALUES (\"" . $statusUpdate . "\", \"" . $id . "\")";
-			
-			if (!$connection->query($sql)) {
+			//$sql = "INSERT INTO updates (status, posterid) VALUES (\"" . $statusUpdate . "\", \"" . $id . "\")";
+			$sql = "INSERT INTO updates (status, posterid) VALUES (?, ?)";
+			if (!$stmt = $connection->prepare($sql);) {
 				if (empty($errorMessage)) {
 					$errorMessage = "<p id=\"error\">Database error.</p>";
 				}
 			} else {
 				$postMessage = "<p id=\"label\">Status update successful.</p>";
 			}
+			$stmt->bind_param("ss", $statusUpdate, $id);
+			$stmt->execute();
         } else if (empty($errorMessage)) {
 			$errorMessage = "<p id=\"error\">Please enter a valid status update.</p>";
 		}
