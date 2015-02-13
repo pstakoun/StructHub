@@ -94,6 +94,11 @@
 		</div>
 		
         <div id="content">
+			<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
+				<p id="label">Search for user: <input type="text" name="query" />
+				<input type="hidden" name="type" value="user" />
+				<input type="submit" name="search" value="Search" /></p>
+			</form>
             <div id = "results">
                 <?php
 					// Display search results
@@ -101,6 +106,9 @@
 						case "user":
 							// Get results
 							$users = getUsers($connection, $id, $query);
+							if (count($users) == 0) {
+								if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">No results found.</p>"; }
+							}
 							foreach ($users as $u) {
 								$sql = "SELECT * FROM users WHERE id = \"" . $u . "\"";
 								$result = $connection->query($sql);

@@ -51,7 +51,7 @@
 					}
 				?>
 					<form method="post" action="search.php">
-						<p id="label">Find Contact: <input type="text" name="query" />
+						<p id="label">Search for user: <input type="text" name="query" />
 						<input type="hidden" name="type" value="user" />
 						<input type="submit" name="search" value="Search" /></p>
 					</form>
