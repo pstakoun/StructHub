@@ -5,8 +5,10 @@
         die();
     }
 	$id = $_SESSION["id"];
-	$query = $_POST["query"];
-	$type = $_POST["type"];
+	$query = "";
+	$type = null;
+	if (isset($_POST["query"])) { $query = $_POST["query"]; }
+	if (isset($_POST["type"])) { $type = $_POST["type"]; }
 	
 	// Connect to database
 	$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
@@ -95,7 +97,7 @@
 		
         <div id="content">
 			<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-				<p id="label">Search for user: <input type="text" name="query" />
+				<p id="label">Search for user: <input type="text" name="query" value=<?php echo($query); ?> />
 				<input type="hidden" name="type" value="user" />
 				<input type="submit" name="search" value="Search" /></p>
 			</form>

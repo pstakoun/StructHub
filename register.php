@@ -29,8 +29,13 @@
 					$password = htmlspecialchars($_POST["password"]);
 					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
 					
-					$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
-					$result = $connection->query($sql);
+					//$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
+					$sql = "SELECT * FROM users WHERE email = ?";
+					//$result = $connection->query($sql);
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $email);
+					$stmt->execute();
+					$result = $stmt->get_result();
 					
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
@@ -90,35 +95,59 @@
 				
 				// Ensure id is unique
 				$id = uniqid("", true);
-				$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
-				$result = $connection->query($sql);
+				//$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+				$sql = "SELECT * FROM users WHERE id = ?";
+				//$result = $connection->query($sql);
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("s", $id);
+				$stmt->execute();
+				$result = $stmt->get_result();
 				while ($result->num_rows != 0) {
 					$id = uniqid("", true);
-					$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
-					$result = $connection->query($sql);
+					//$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+					$sql = "SELECT * FROM users WHERE id = ?";
+					//$result = $connection->query($sql);
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $id);
+					$stmt->execute();
+					$result = $stmt->get_result();
 				}
 				
 				// Ensure username is unique
 				$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
 				$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
 				$username = $fn . "." . $ln;
-				$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
-				$result = $connection->query($sql);
+				//$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
+				$sql = "SELECT * FROM users WHERE username = ?";
+				//$result = $connection->query($sql);
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("s", $username);
+				$stmt->execute();
+				$result = $stmt->get_result();
 				$i = 0;
 				while ($result->num_rows != 0) {
 					$username = $fn . "." . $ln . ++$i;
-					$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
-					$result = $connection->query($sql);
+					//$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
+					$sql = "SELECT * FROM users WHERE username = ?";
+					//$result = $connection->query($sql);
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $username);
+					$stmt->execute();
+					$result = $stmt->get_result();
 				}
 				
 				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
 				
 				// Create query
-				$sql = "INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $username . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
-
-				if (!$connection->query($sql)) {
+				//$sql = "INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $username . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
+				$sql = "INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("ssssss", $id, $username, $firstname, $lastname, $email, $passwordhash);
+				$stmt->execute();
+				
+				/*if (!$connection->query($sql)) {
 					if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Database error.</p>"; }
-				}
+				}*/
 				if (!empty($errorMessage)) {
 					echo($errorMessage);
 				} else {

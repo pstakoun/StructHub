@@ -61,7 +61,7 @@
 						$result = $connection->query($sql);
 						$row = $result->fetch_assoc();
 						$name = $row["firstname"] . " " . $row["lastname"];
-						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\>" . $name . "</a>");
+						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
 					}
 					
 				?>
