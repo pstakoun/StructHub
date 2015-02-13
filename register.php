@@ -84,19 +84,37 @@
 				</form>
 
 			<?php } else {
-			
+				// Capitalize name
+				$firstname = ucfirst($firstname);
+				$lastname = ucfirst($lastname);
+				
 				// Ensure id is unique
 				$id = uniqid("", true);
 				$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
 				$result = $connection->query($sql);
 				while ($result->num_rows != 0) {
 					$id = uniqid("", true);
+					$sql = "SELECT * FROM users WHERE id = \"" . $id . "\"";
+					$result = $connection->query($sql);
+				}
+				
+				// Ensure username is unique
+				$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
+				$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
+				$username = $fn . "." . $ln;
+				$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
+				$result = $connection->query($sql);
+				$i = 0;
+				while ($result->num_rows != 0) {
+					$username = $fn . "." . $ln . ++$i;
+					$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
+					$result = $connection->query($sql);
 				}
 				
 				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
 				
 				// Create query
-				$sql = "INSERT INTO users (id, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
+				$sql = "INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (\"" . $id . "\", \"" . $username . "\", \"" . $firstname . "\", \"" . $lastname . "\", \"" . $email . "\", \"" . $passwordhash . "\")";
 
 				if (!$connection->query($sql)) {
 					if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Database error.</p>"; }
