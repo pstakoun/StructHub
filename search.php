@@ -32,10 +32,42 @@
 		
 		// Find users
 		$users = [];
-		$sql = "SELECT * FROM users WHERE user1 = \"" . $id . "\" AND status = 2";
-		$result = $connection->query($sql);
-		while ($row = $result->fetch_assoc()) {
-			$users[] = $row["user2"];
+		$tempusers = [];
+		$name = preg_split('/\s+/', $query);
+		
+		if (count($name) == 1) {
+			$n = $name[0];
+			$sql = "SELECT * FROM users WHERE firstname LIKE \"" . $n . "\" OR lastname LIKE \"" . $n . "\"";
+			$result = $connection->query($sql);
+			while ($row = $result->fetch_assoc()) {
+				if (in_array($row["id"], $contacts)) {
+					array_unshift($users, $row["id"]);
+				}
+				else {
+					$users[] = $row["id"];
+				}
+			}
+		}
+		else {
+			foreach ($name as $n) {
+				$sql = "SELECT * FROM users WHERE firstname LIKE \"" . $n . "\" OR lastname LIKE \"" . $n . "\"";
+				$result = $connection->query($sql);
+				while ($row = $result->fetch_assoc()) {
+					if (in_array($row["id"], $tempusers)) {
+						if (!in_array($row["id"], $users)) {
+							if (in_array($row["id"], $contacts)) {
+								array_unshift($users, $row["id"]);
+							}
+							else {
+								$users[] = $row["id"];
+							}
+						}
+					}
+					else {
+						$tempusers[] = $row["id"];					
+					}
+				}
+			}
 		}
 		return $users;
 	}
