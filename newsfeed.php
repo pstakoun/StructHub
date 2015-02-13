@@ -30,7 +30,7 @@
 	
 	echo("<h2>News</h2>");
 	
-	foreach ($news as $status) {
+	foreach (array_reverse($news) as $status) {
 		$sql = "SELECT * FROM users WHERE id = \"" . $status["posterid"] . "\"";
 		$result = $connection->query($sql);
 		$row = $result->fetch_assoc();
