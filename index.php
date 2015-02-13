@@ -31,7 +31,7 @@
             // Create query
 			//$sql = "INSERT INTO updates (status, posterid) VALUES (\"" . $statusUpdate . "\", \"" . $id . "\")";
 			$sql = "INSERT INTO updates (status, posterid) VALUES (?, ?)";
-			if (!$stmt = $connection->prepare($sql);) {
+			if (!$stmt = $connection->prepare($sql)) {
 				if (empty($errorMessage)) {
 					$errorMessage = "<p id=\"error\">Database error.</p>";
 				}
