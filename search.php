@@ -14,8 +14,10 @@
 		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
 	
-	// Get contacts
-	function getContacts($connection, $id) {
+	// Get users
+	function getUsers($connection, $id, $query)
+	{
+		// Find contacts
 		$contacts = [];
 		$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
 		$result = $connection->query($sql);
@@ -27,7 +29,15 @@
 		while ($row = $result->fetch_assoc()) {
 			$contacts[] = $row["user1"];
 		}
-		return $contacts;
+		
+		// Find users
+		$users = [];
+		$sql = "SELECT * FROM users WHERE user1 = \"" . $id . "\" AND status = 2";
+		$result = $connection->query($sql);
+		while ($row = $result->fetch_assoc()) {
+			$users[] = $row["user2"];
+		}
+		return $users;
 	}
 ?>
 
@@ -54,14 +64,13 @@
         <div id="content">
             <div id = "results">
                 <?php
-					
 					// Display search results
 					switch ($type) {
 						case "user":
 							// Get results
-							$results = getContacts($connection, $id);
-							foreach ($results as $user) {
-								$sql = "SELECT * FROM users WHERE id = \"" . $user . "\"";
+							$users = getUsers($connection, $id, $query);
+							foreach ($users as $u) {
+								$sql = "SELECT * FROM users WHERE id = \"" . $u . "\"";
 								$result = $connection->query($sql);
 								$row = $result->fetch_assoc();
 								$name = $row["firstname"] . " " . $row["lastname"];
