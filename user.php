@@ -5,6 +5,11 @@
         die();
     }
 	$id = $_SESSION["id"];
+	
+	$username = null;
+	if (isset($_GET["id"])) {
+		$username = htmlspecialchars($_GET["id"]);
+	}
 ?>
 
 <!DOCTYPE HTML>
@@ -28,8 +33,7 @@
 		</div>
 		
         <div id="content">
-            <div id = "contacts">
-				<h2>Contacts</h2>
+            <div id = "profile">
                 <?php
 					// Connect to database
 					$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
@@ -37,40 +41,25 @@
 						$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 					}
 					
-					// Get contacts
-					$contacts = [];
-					$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
+					// Get user information
+					$sql = "SELECT * FROM users WHERE username = \"" . $username . "\"";
 					$result = $connection->query($sql);
-					while ($row = $result->fetch_assoc()) {
-						$contacts[] = $row["user2"];
+					if ($username == null || $result->num_rows == 0) {
+						echo("<p id=\"error\">User not found.</p>");
 					}
-					$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\" AND status = 2";
-					$result = $connection->query($sql);
-					while ($row = $result->fetch_assoc()) {
-						$contacts[] = $row["user1"];
-					}
-				?>
-					<form method="post" action="search.php">
-						<p id="label">Search for user: <input type="text" name="query" />
-						<input type="hidden" name="type" value="user" />
-						<input type="submit" name="search" value="Search" /></p>
-					</form>
-				<?php
-					foreach ($contacts as $contact) {
-						$sql = "SELECT * FROM users WHERE id = \"" . $contact . "\"";
-						$result = $connection->query($sql);
+					else {
 						$row = $result->fetch_assoc();
-						$name = $row["firstname"] . " " . $row["lastname"];
-						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\>" . $name . "</a>");
+						$firstname = $row["firstname"];
+						$lastname = $row["lastname"];
+						echo("<h2>" . $firstname . " " . $lastname . "</h2>");
 					}
-					
 				?>
             </div>
             
             <div id = "sidebar">
                 <a id ="nav" href="index.php">Home</a><br>
-				<a id ="nav" href="profile.php">Profile</a><br>
-                <a id ="nav" href="#">Contacts</a><br>
+				<a id ="nav" href="#">Profile</a><br>
+                <a id ="nav" href="contacts.php">Contacts</a><br>
                 <a id ="nav" href="messaging.php">Messaging</a><br>
                 <a id ="nav" href="settings.php">Settings</a>
             </div>

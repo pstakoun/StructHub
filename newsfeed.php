@@ -36,7 +36,7 @@
 		$row = $result->fetch_assoc();
 		$name = $row["firstname"] . " " . $row["lastname"];
 		echo("<div id=\"statusUpdate\">");
-			echo("<a id=\"user\" href=\"index.php\">" . $name . "</a>");
+			echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
 			echo("<p id=\"status\">" . $status["status"] . "</p>");
 		echo("</div>");
 	}
