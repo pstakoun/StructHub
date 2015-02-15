@@ -55,6 +55,22 @@
 						while ($row = $result->fetch_array()) {
 							$contacts[] = $row["user1"];
 						}
+						$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 1";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
+						$stmt->execute();
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
+							$contacts[] = $row["user2"];
+						}
+						$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 1";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
+						$stmt->execute();
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
+							$contacts[] = $row["user1"];
+						}
 				?>
 					<form method="post" action="search.php">
 						<p id="label">Search for user: <input type="text" name="query" />
@@ -70,19 +86,13 @@
 						$result = $stmt->get_result();
 						$row = $result->fetch_array();
 						$name = $row["firstname"] . " " . $row["lastname"];
-						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
 					}
 					
 				?>
             </div>
             
-            <div id = "sidebar">
-                <a id ="nav" href="index.php">Home</a><br>
-				<a id ="nav" href="profile.php">Profile</a><br>
-                <a id ="nav" href="#">Contacts</a><br>
-                <a id ="nav" href="messaging.php">Messaging</a><br>
-                <a id ="nav" href="settings.php">Settings</a>
-            </div>
+            <?php include_once("sidebar.php"); ?>
         </div>
         
 	</body>

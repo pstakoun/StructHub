@@ -78,8 +78,13 @@
 						}
 					}
 					else {
-						$tempusers[] = $row["id"];					
+						$tempusers[] = $row["id"];
 					}
+				}
+			}
+			foreach ($tempusers as $u) {
+				if (!in_array($u, $users)) {
+					$users[] = $u;
 				}
 			}
 		}
@@ -131,7 +136,7 @@
 								$result = $stmt->get_result();
 								$row = $result->fetch_array();
 								$name = $row["firstname"] . " " . $row["lastname"];
-								echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+								echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
 							}
 							break;
 						default:
@@ -141,13 +146,7 @@
 				?>
             </div>
 
-            <div id = "sidebar">
-                <a id ="nav" href="index.php">Home</a><br>
-				<a id ="nav" href="profile.php">Profile</a><br>
-                <a id ="nav" href="contacts.php">Contacts</a><br>
-                <a id ="nav" href="messaging.php">Messaging</a><br>
-                <a id ="nav" href="settings.php">Settings</a>
-            </div>
+            <?php include_once("sidebar.php"); ?>
         </div>
             
 	</body>
