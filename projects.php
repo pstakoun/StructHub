@@ -27,8 +27,8 @@
 		</div>
 		
         <div id="content">
-            <div id = "messages">
-                <!-- Display messages -->
+            <div id = "projects">
+                <!-- Display projects -->
             </div>
 
             <?php include_once("sidebar.php"); ?>
