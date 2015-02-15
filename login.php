@@ -14,9 +14,7 @@
 		}
 		
 		// Get user id from database
-		//$sql = "SELECT * FROM users WHERE email = \"" . $email . "\"";
 		$sql = "SELECT * FROM users WHERE email = ?";
-		//$result = $connection->query($sql);
 		$stmt = $connection->prepare($sql);
 		$stmt->bind_param("s", $email);
 		$stmt->execute();
@@ -26,7 +24,6 @@
 			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
 		// Set user id
 		} else {
-			//$row = $result->fetch_assoc();
 			$row = $result->fetch_array();
 			if (password_verify($password, $row["password"])) {
 				$_SESSION["id"] = $row["id"];

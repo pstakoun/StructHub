@@ -21,25 +21,19 @@
 	{
 		// Find contacts
 		$contacts = [];
-		//$sql = "SELECT * FROM contacts WHERE user1 = \"" . $id . "\" AND status = 2";
 		$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 2";
-		//$result = $connection->query($sql);
 		$stmt = $connection->prepare($sql);
 		$stmt->bind_param("s", $id);
 		$stmt->execute();
 		$result = $stmt->get_result();
-		//while ($row = $result->fetch_assoc()) {
 		while ($row = $result->fetch_array()) {
 			$contacts[] = $row["user2"];
 		}
-		//$sql = "SELECT * FROM contacts WHERE user2 = \"" . $id . "\" AND status = 2";
 		$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 2";
-		//$result = $connection->query($sql);
 		$stmt = $connection->prepare($sql);
 		$stmt->bind_param("s", $id);
 		$stmt->execute();
 		$result = $stmt->get_result();
-		//while ($row = $result->fetch_assoc()) {
 		while ($row = $result->fetch_array()) {
 			$contacts[] = $row["user1"];
 		}
@@ -51,14 +45,11 @@
 		
 		if (count($name) == 1) {
 			$n = $name[0];
-			//$sql = "SELECT * FROM users WHERE firstname LIKE \"" . $n . "\" OR lastname LIKE \"" . $n . "\"";
 			$sql = "SELECT * FROM users WHERE firstname LIKE ? OR lastname LIKE ?";
-			//$result = $connection->query($sql);
 			$stmt = $connection->prepare($sql);
 			$stmt->bind_param("ss", $n, $n);
 			$stmt->execute();
 			$result = $stmt->get_result();
-			//while ($row = $result->fetch_assoc()) {
 			while ($row = $result->fetch_array()) {
 				if (in_array($row["id"], $contacts)) {
 					array_unshift($users, $row["id"]);
@@ -70,14 +61,11 @@
 		}
 		else {
 			foreach ($name as $n) {
-				//$sql = "SELECT * FROM users WHERE firstname LIKE \"" . $n . "\" OR lastname LIKE \"" . $n . "\"";
 				$sql = "SELECT * FROM users WHERE firstname LIKE ? OR lastname LIKE ?";
-				//$result = $connection->query($sql);
 				$stmt = $connection->prepare($sql);
 				$stmt->bind_param("ss", $n, $n);
 				$stmt->execute();
 				$result = $stmt->get_result();
-				//while ($row = $result->fetch_assoc()) {
 				while ($row = $result->fetch_array()) {
 					if (in_array($row["id"], $tempusers)) {
 						if (!in_array($row["id"], $users)) {
@@ -136,14 +124,11 @@
 								if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">No results found.</p>"; }
 							}
 							foreach ($users as $u) {
-								//$sql = "SELECT * FROM users WHERE id = \"" . $u . "\"";
 								$sql = "SELECT * FROM users WHERE id = ?";
-								//$result = $connection->query($sql);
 								$stmt = $connection->prepare($sql);
 								$stmt->bind_param("s", $u);
 								$stmt->execute();
 								$result = $stmt->get_result();
-								//$row = $result->fetch_assoc();
 								$row = $result->fetch_array();
 								$name = $row["firstname"] . " " . $row["lastname"];
 								echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
