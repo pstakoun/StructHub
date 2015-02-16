@@ -79,13 +79,7 @@ h2 {
     height: inherit;
 }
 
-#register {
-    width: 512px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#login {
+#form {
     width: 512px;
     margin-left: auto;
     margin-right: auto;

@@ -1,0 +1,3 @@
+- organise contacts
+- show user their own posts
+- logo

@@ -1,65 +1,66 @@
+<?php
+	session_start();
+	if (isset($_SESSION["id"])) {
+		header("Location: index.php");
+		die();
+	}
+	
+	require("lib/password.php");
+	
+	$errorMessage = "";
+	// Connect to database
+	try {
+		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch(PDOException $e) {
+		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
+	}
+	$postValid = True;
+	$errorMessage = "";
+	
+	if (empty($_POST)) {
+		$postValid = False;
+	} else {
+		$firstname = htmlspecialchars($_POST["firstname"]);
+		$lastname = htmlspecialchars($_POST["lastname"]);
+		$email = htmlspecialchars($_POST["email"]);
+		$password = htmlspecialchars($_POST["password"]);
+		$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
+		
+		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+		$stmt->bindParam(":email", $email);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		
+		// Validate name
+		if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Name invalid.</p>";
+		// Validate email
+		} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Email invalid.</p>";
+		// Validate password
+		} else if (strlen($password) < 6) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Password too short.</p>";
+		// Validate password confirmation
+		} else if ($password != $confirmpassword) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
+		} else if (!empty($result)) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Email in use.</p>";
+		}
+	}
+?>
+
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>StructHub</title>
 		<link rel="stylesheet" href="style.css">
-		<?php
-			session_start();
-			
-			$errorMessage = "";
-			// Connect to database
-			try {
-				$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			} catch(PDOException $e) {
-				$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-			}
-			
-			if (isset($_SESSION["id"])) {
-				header("Location: index.php");
-				die();
-			} else {
-				$postValid = True;
-				$errorMessage = "";
-				
-				if (empty($_POST)) {
-					$postValid = False;
-				} else {
-					$firstname = htmlspecialchars($_POST["firstname"]);
-					$lastname = htmlspecialchars($_POST["lastname"]);
-					$email = htmlspecialchars($_POST["email"]);
-					$password = htmlspecialchars($_POST["password"]);
-					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
-					
-					$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-					$stmt->bindParam(":email", $email);
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-					
-					// Validate name
-					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Name invalid.</p>";
-					// Validate email
-					} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email invalid.</p>";
-					// Validate password
-					} else if (strlen($password) < 6) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Password too short.</p>";
-					// Validate password confirmation
-					} else if ($password != $confirmpassword) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
-					} else if (!empty($result)) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email in use.</p>";
-					}
-				}
-			}
-		?>
 	</head>
 	
 	<body>
@@ -74,18 +75,37 @@
 			</div>
 		</div>
 		
-		<div id="register">
+		<div id="form">
 			<?php
 				if (!$postValid) {
 			?>
 				<?php echo($errorMessage); ?>
 				<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-					<p id="label">First Name: <input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></p>
-					<p id="label">Last Name: <input type="text" name="lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></p>
-					<p id="label">Email: <input type="email" name="email" value="<?php if (!empty($email)) { echo($email); } ?>" /></p>
-					<p id="label">Password: <input type="password" name="password" /></p>
-					<p id="label">Confirm Password: <input type="password" name="confirmpassword" /></p>
-					<p id="label"><input type="submit" name="register" value="Register" /></p>
+					<table style="margin: 0 auto;">
+						<tr>
+							<td id="label" align="right">First Name: </td>
+							<td id="label"><input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></td>
+						</tr>
+						<tr>
+							<td id="label" align="right">Last Name: </td>
+							<td id="label"><input type="text" name="lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></td>
+						</tr>
+						<tr>
+							<td id="label" align="right">Email: </td>
+							<td id="label"><input type="email" name="email" value="<?php if (!empty($email)) { echo($email); } ?>" /></td>
+						</tr>
+						<tr>
+							<td id="label" align="right">Password: </td>
+							<td id="label"><input type="password" name="password" /></td>
+						</tr>
+						<tr>
+							<td id="label" align="right">Confirm Password: </td>
+							<td id="label"><input type="password" name="confirmpassword" /></td>
+						</tr>
+						<tr>
+							<td id="label" align="right"><input type="submit" name="register" value="Register" /></td>
+						</tr>
+					</table>
 				</form>
 
 			<?php } else {

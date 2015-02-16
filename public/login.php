@@ -1,9 +1,12 @@
 <?php
+	require("lib/password.php");
+
     session_start();
     if (isset($_SESSION["id"])) {
         header("Location: index.php");
 		die();
-    } else if (!empty($_POST)) {
+    }
+	else if (!empty($_POST)) {
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
 		
@@ -58,12 +61,24 @@
 			</div>
 		</div>
 		
-		<div id="login">
+		<div id="form">
             <?php if (!empty($errorMessage)) { echo($errorMessage); } ?>
             <form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-                <p id="label">Email: <input type="email" name="email" /></p>
-                <p id="label">Password: <input type="password" name="password" /></p>
-                <p id="label"><input type="submit" name="login" value="Login" /> <a id="link" href="register.php">Don't have an account? Register now!</a></p>
+				<table style="margin: 0 auto;">
+					<tr>
+						<td id="label" align="right">Email: </td>
+						<td id="label"><input type="email" name="email" /></td>
+					</tr>
+					<tr>
+						<td id="label" align="right">Password: </td>
+						<td id="label"><input type="password" name="password" /></td>
+					</tr>
+					<tr>
+						<td id="label" align="right"><input type="submit" name="login" value="Login" /></td>
+						<td id="link"><a href="register.php">Don't have an account? Register now!</a></td>
+					</tr>
+				</table>
+                
             </form>
 		</div>
 	</body>

@@ -1,65 +1,62 @@
+<?php
+	session_start();
+	if (isset($_SESSION["id"])) {
+		header("Location: index.php");
+		die();
+	}
+			
+	$errorMessage = "";
+	// Connect to database
+	try {
+		$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	} catch(PDOException $e) {
+		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
+	}
+			
+	if (empty($_POST)) {
+		$postValid = False;
+	} else {
+		$firstname = htmlspecialchars($_POST["firstname"]);
+		$lastname = htmlspecialchars($_POST["lastname"]);
+		$email = htmlspecialchars($_POST["email"]);
+		$password = htmlspecialchars($_POST["password"]);
+		$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
+		
+		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+		$stmt->bindParam(":email", $email);
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		
+		// Validate name
+		if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Name invalid.</p>";
+		// Validate email
+		} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Email invalid.</p>";
+		// Validate password
+		} else if (strlen($password) < 6) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Password too short.</p>";
+		// Validate password confirmation
+		} else if ($password != $confirmpassword) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
+		} else if (!empty($result)) {
+			$postValid = False;
+			$errorMessage = "<p id=\"error\">Email in use.</p>";
+		}
+	}
+?>
+
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>StructHub</title>
 		<link rel="stylesheet" href="style.css">
-		<?php
-			session_start();
-			
-			$errorMessage = "";
-			// Connect to database
-			try {
-				$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");
-				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			} catch(PDOException $e) {
-				$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-			}
-			
-			if (isset($_SESSION["id"])) {
-				header("Location: index.php");
-				die();
-			} else {
-				$postValid = True;
-				$errorMessage = "";
-				
-				if (empty($_POST)) {
-					$postValid = False;
-				} else {
-					$firstname = htmlspecialchars($_POST["firstname"]);
-					$lastname = htmlspecialchars($_POST["lastname"]);
-					$email = htmlspecialchars($_POST["email"]);
-					$password = htmlspecialchars($_POST["password"]);
-					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
-					
-					$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-					$stmt->bindParam(":email", $email);
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-					
-					// Validate name
-					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Name invalid.</p>";
-					// Validate email
-					} else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email invalid.</p>";
-					// Validate password
-					} else if (strlen($password) < 6) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Password too short.</p>";
-					// Validate password confirmation
-					} else if ($password != $confirmpassword) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
-					} else if (!empty($result)) {
-						$postValid = False;
-						$errorMessage = "<p id=\"error\">Email in use.</p>";
-					}
-				}
-			}
-		?>
 	</head>
 	
 	<body>
