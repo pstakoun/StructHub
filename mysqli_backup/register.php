@@ -2,16 +2,14 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>StructHub</title>
+		<title>Social Network</title>
 		<link rel="stylesheet" href="style.css">
 		<?php
 			session_start();
 			
 			// Connect to database
-			try {
-				$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");
-				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			} catch(PDOException $e) {
+			$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+			if ($connection->connect_error) {
 				$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 			}
 			
@@ -31,10 +29,11 @@
 					$password = htmlspecialchars($_POST["password"]);
 					$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
 					
-					$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-					$stmt->bindParam(":email", $email);
+					$sql = "SELECT * FROM users WHERE email = ?";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $email);
 					$stmt->execute();
-					$result = $stmt->fetchAll();
+					$result = $stmt->get_result();
 					
 					// Validate name
 					if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
@@ -52,7 +51,7 @@
 					} else if ($password != $confirmpassword) {
 						$postValid = False;
 						$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
-					} else if (!empty($result)) {
+					} else if ($result->num_rows != 0) {
 						$postValid = False;
 						$errorMessage = "<p id=\"error\">Email in use.</p>";
 					}
@@ -68,7 +67,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
 				<div>
-					<h1>StructHub</h1>
+					<h1>Social Network</h1>
 				</div>
 			</div>
 		</div>
@@ -94,41 +93,45 @@
 				
 				// Ensure id is unique
 				$id = uniqid("", true);
-				$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
-				$stmt->bindParam(":id", $id);
+				$sql = "SELECT * FROM users WHERE id = ?";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("s", $id);
 				$stmt->execute();
-				$result = $stmt->fetchAll();
-				while (!empty($result)) {
+				$result = $stmt->get_result();
+				while ($result->num_rows != 0) {
 					$id = uniqid("", true);
+					$sql = "SELECT * FROM users WHERE id = ?";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $id);
 					$stmt->execute();
-					$result = $stmt->fetchAll();
+					$result = $stmt->get_result();
 				}
 				
 				// Ensure username is unique
 				$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
 				$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
 				$username = $fn . "." . $ln;
-				$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-				$stmt->bindParam(":username", $username);
+				$sql = "SELECT * FROM users WHERE username = ?";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("s", $username);
 				$stmt->execute();
-				$result = $stmt->fetchAll();
+				$result = $stmt->get_result();
 				$i = 0;
-				while (!empty($result)) {
+				while ($result->num_rows != 0) {
 					$username = $fn . "." . $ln . ++$i;
+					$sql = "SELECT * FROM users WHERE username = ?";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $username);
 					$stmt->execute();
-					$result = $stmt->fetchAll();
+					$result = $stmt->get_result();
 				}
 				
 				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
 				
 				// Create query
-				$stmt = $conn->prepare("INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (:id, :username, :firstname, :lastname, :email, :password)");
-				$stmt->bindParam(":id", $id);
-				$stmt->bindParam(":username", $username);
-				$stmt->bindParam(":firstname", $firstname);
-				$stmt->bindParam(":lastname", $lastname);
-				$stmt->bindParam(":email", $email);
-				$stmt->bindParam(":password", $passwordhash);
+				$sql = "INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?, ?)";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("ssssss", $id, $username, $firstname, $lastname, $email, $passwordhash);
 				$stmt->execute();
 				
 				if (!empty($errorMessage)) {

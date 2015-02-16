@@ -8,23 +8,24 @@
         $password = htmlspecialchars($_POST["password"]);
 		
 		// Connect to database
-		$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
-		if ($connection->connect_error) {
+		try {
+			$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
+			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		} catch(PDOException $e) {
 			$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 		}
 		
 		// Get user id from database
-		$sql = "SELECT * FROM users WHERE email = ?";
-		$stmt = $connection->prepare($sql);
-		$stmt->bind_param("s", $email);
+		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+		$stmt->bindParam(":email", $email);
 		$stmt->execute();
-		$result = $stmt->get_result();
+		$result = $stmt->fetchAll();
 		
 		if (empty($result)) {
 			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
 		// Set user id
 		} else {
-			$row = $result->fetch_array();
+			$row = $result[0];
 			if (password_verify($password, $row["password"])) {
 				$_SESSION["id"] = $row["id"];
 				header("Location: index.php");
@@ -40,7 +41,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Social Network</title>
+		<title>StructHub</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -51,7 +52,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>Social Network</h1>
+                    <h1>StructHub</h1>
                 </div>
 			</div>
 		</div>

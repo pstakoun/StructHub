@@ -16,7 +16,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>StructHub</title>
+		<title>Social Network</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -27,7 +27,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>StructHub</h1>
+                    <h1>Social Network</h1>
                 </div>
 			</div>
 		</div>
@@ -39,7 +39,13 @@
                 </form>
             </div>
 
-            <?php include_once("sidebar.php"); ?>
+            <div id = "sidebar">
+                <a id ="nav" href="index.php">Home</a><br>
+				<a id ="nav" href="profile.php">Profile</a><br>
+                <a id ="nav" href="contacts.php">Contacts</a><br>
+                <a id ="nav" href="messaging.php">Messaging</a><br>
+                <a id ="nav" href="#">Settings</a>
+            </div>
         </div>
         
 	</body>

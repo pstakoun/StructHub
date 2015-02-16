@@ -10,7 +10,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Social Network</title>
+		<title>StructHub</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -21,7 +21,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>Social Network</h1>
+                    <h1>StructHub</h1>
                 </div>
 			</div>
 		</div>

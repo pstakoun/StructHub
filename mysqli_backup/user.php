@@ -12,57 +12,56 @@
 	}
 	
 	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
+	$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+	if ($connection->connect_error) {
 		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
 	
 	if (!empty($username)) {
 		// Get user id
-		$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-		$stmt->bindParam(":username", $username);
+		$sql = "SELECT * FROM users WHERE username = ?";
+		$stmt = $connection->prepare($sql);
+		$stmt->bind_param("s", $username);
 		$stmt->execute();
-		$result = $stmt->fetchAll();
-		if (!empty($result)) {
-			$row = $result[0];
+		$result = $stmt->get_result();
+		if ($result->num_rows > 0) {
+			$row = $result->fetch_array();
 			$userid = $row["id"];
 			
-			$stmt = $conn->prepare("SELECT * FROM contacts WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-			$stmt->bindParam(":id", $id);
-			$stmt->bindParam(":userid", $userid);
+			$sql = "SELECT * FROM contacts WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
+			$stmt = $connection->prepare($sql);
+			$stmt->bind_param("ssss", $id, $userid, $userid, $id);
 			$stmt->execute();
-			$result = $stmt->fetchAll();
-			if (empty($result)) {
-				$stmt = $conn->prepare("INSERT INTO contacts(user1, user2, status) VALUES (:id, :userid, 0)");
-				$stmt->bindParam(":id", $id);
-				$stmt->bindParam(":userid", $userid);
+			$result = $stmt->get_result();
+			if ($result->num_rows == 0) {
+				$sql = "INSERT INTO contacts(user1, user2, status) VALUES (?, ?, 0)";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("ss", $id, $userid);
 				$stmt->execute();
 			}
 			else {
 				if (isset($_POST["removeContact"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
+					$sql = "UPDATE contacts SET status = 0 WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("ssss", $id, $userid, $userid, $id);
 					$stmt->execute();
 				}
 				if (isset($_POST["acceptContactRequest"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 2 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
+					$sql = "UPDATE contacts SET status = 2 WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("ssss", $id, $userid, $userid, $id);
 					$stmt->execute();
 				}
 				if (isset($_POST["deleteContactRequest"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
+					$sql = "UPDATE contacts SET status = 0 WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("ssss", $id, $userid, $userid, $id);
 					$stmt->execute();
 				}
 				if (isset($_POST["addContact"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 1 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
+					$sql = "UPDATE contacts SET status = 1 WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("ssss", $id, $userid, $userid, $id);
 					$stmt->execute();
 				}
 			}
@@ -74,7 +73,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>StructHub</title>
+		<title>Social Network</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -85,7 +84,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>StructHub</h1>
+                    <h1>Social Network</h1>
                 </div>
 			</div>
 		</div>
@@ -94,15 +93,16 @@
             <div id = "profile">
                 <?php
 					// Get user information
-					$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-					$stmt->bindParam(":username", $username);
+					$sql = "SELECT * FROM users WHERE username = ?";
+					$stmt = $connection->prepare($sql);
+					$stmt->bind_param("s", $username);
 					$stmt->execute();
-					$result = $stmt->fetchAll();
-					if (empty($username) || empty($result)) {
+					$result = $stmt->get_result();
+					if ($username == null || $result->num_rows == 0) {
 						echo("<p id=\"error\">User not found.</p>");
 					}
 					else {
-						$row = $result[0];
+						$row = $result->fetch_array();
 						$userid = $row["id"];
 						$firstname = $row["firstname"];
 						$lastname = $row["lastname"];
@@ -110,34 +110,38 @@
 						
 						// Find contacts
 						$contacts = [];
-						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 2");
-						$stmt->bindParam(":id", $id);
+						$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 2";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
-						foreach ($result as $row) {
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
 							$contacts[] = $row["user2"];
 						}
-						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 2");
-						$stmt->bindParam(":id", $id);
+						$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 2";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
-						foreach ($result as $row) {
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
 							$contacts[] = $row["user1"];
 						}
 						$sent = [];
 						$received = [];
-						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 1");
-						$stmt->bindParam(":id", $id);
+						$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 1";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
-						foreach ($result as $row) {
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
 							$sent[] = $row["user2"];
 						}
-						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 1");
-						$stmt->bindParam(":id", $id);
+						$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 1";
+						$stmt = $connection->prepare($sql);
+						$stmt->bind_param("s", $id);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
-						foreach ($result as $row) {
+						$result = $stmt->get_result();
+						while ($row = $result->fetch_array()) {
 							$received[] = $row["user1"];
 						}
 						

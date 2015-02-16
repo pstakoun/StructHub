@@ -10,7 +10,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>StructHub</title>
+		<title>Social Network</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -21,14 +21,14 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>StructHub</h1>
+                    <h1>Social Network</h1>
                 </div>
 			</div>
 		</div>
 		
         <div id="content">
-            <div id = "projects">
-                <!-- Display projects -->
+            <div id = "messages">
+                <!-- Display messages -->
             </div>
 
             <?php include_once("sidebar.php"); ?>

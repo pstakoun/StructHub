@@ -11,30 +11,30 @@
 	if (isset($_POST["type"])) { $type = $_POST["type"]; }
 	
 	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
+	$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
+	if ($connection->connect_error) {
 		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
 	
 	// Get users
-	function getUsers($conn, $id, $query)
+	function getUsers($connection, $id, $query)
 	{
 		// Find contacts
 		$contacts = [];
-		$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 2");
-		$stmt->bindParam(":id", $id);
+		$sql = "SELECT * FROM contacts WHERE user1 = ? AND status = 2";
+		$stmt = $connection->prepare($sql);
+		$stmt->bind_param("s", $id);
 		$stmt->execute();
-		$result = $stmt->fetchAll();
-		foreach ($result as $row) {
+		$result = $stmt->get_result();
+		while ($row = $result->fetch_array()) {
 			$contacts[] = $row["user2"];
 		}
-		$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 2");
-		$stmt->bindParam(":id", $id);
+		$sql = "SELECT * FROM contacts WHERE user2 = ? AND status = 2";
+		$stmt = $connection->prepare($sql);
+		$stmt->bind_param("s", $id);
 		$stmt->execute();
-		$result = $stmt->fetchAll();
-		foreach ($result as $row) {
+		$result = $stmt->get_result();
+		while ($row = $result->fetch_array()) {
 			$contacts[] = $row["user1"];
 		}
 		
@@ -45,11 +45,12 @@
 		
 		if (count($name) == 1) {
 			$n = $name[0];
-			$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
-			$stmt->bindParam(":n", $n);
+			$sql = "SELECT * FROM users WHERE firstname LIKE ? OR lastname LIKE ?";
+			$stmt = $connection->prepare($sql);
+			$stmt->bind_param("ss", $n, $n);
 			$stmt->execute();
-			$result = $stmt->fetchAll();
-			foreach ($result as $row) {
+			$result = $stmt->get_result();
+			while ($row = $result->fetch_array()) {
 				if (in_array($row["id"], $contacts)) {
 					array_unshift($users, $row["id"]);
 				}
@@ -60,11 +61,12 @@
 		}
 		else {
 			foreach ($name as $n) {
-				$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
-				$stmt->bindParam(":n", $n);
+				$sql = "SELECT * FROM users WHERE firstname LIKE ? OR lastname LIKE ?";
+				$stmt = $connection->prepare($sql);
+				$stmt->bind_param("ss", $n, $n);
 				$stmt->execute();
-				$result = $stmt->fetchAll();
-				foreach ($result as $row) {
+				$result = $stmt->get_result();
+				while ($row = $result->fetch_array()) {
 					if (in_array($row["id"], $tempusers)) {
 						if (!in_array($row["id"], $users)) {
 							if (in_array($row["id"], $contacts)) {
@@ -94,7 +96,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>StructHub</title>
+		<title>Social Network</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -105,7 +107,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>StructHub</h1>
+                    <h1>Social Network</h1>
                 </div>
 			</div>
 		</div>
@@ -122,16 +124,17 @@
 					switch ($type) {
 						case "user":
 							// Get results
-							$users = getUsers($conn, $id, $query);
+							$users = getUsers($connection, $id, $query);
 							if (count($users) == 0) {
 								if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">No results found.</p>"; }
 							}
 							foreach ($users as $u) {
-								$stmt = $conn->prepare("SELECT * FROM users WHERE id = :u");
-								$stmt->bindParam(":u", $u);
+								$sql = "SELECT * FROM users WHERE id = ?";
+								$stmt = $connection->prepare($sql);
+								$stmt->bind_param("s", $u);
 								$stmt->execute();
-								$result = $stmt->fetchAll();
-								$row = $result[0];
+								$result = $stmt->get_result();
+								$row = $result->fetch_array();
 								$name = $row["firstname"] . " " . $row["lastname"];
 								echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
 							}
