@@ -11,7 +11,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Social Network</title>
+		<title>StructHub</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	
@@ -22,7 +22,7 @@
 					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
 				</div>
                 <div>
-                    <h1>Social Network</h1>
+                    <h1>StructHub</h1>
                 </div>
 			</div>
 		</div>
@@ -31,22 +31,27 @@
             <div id = "profile">
                 <?php
 					// Connect to database
-					$connection = new mysqli("localhost", "pstakoun", "yJcRNzpSaEXatKqc", "socialnetwork");
-					if ($connection->connect_error) {
+					try {
+						$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");
+						$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					} catch(PDOException $e) {
 						$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 					}
 					
 					// Get user information
-					$sql = "SELECT * FROM users WHERE id = ?";
-					$stmt = $connection->prepare($sql);
-					$stmt->bind_param("s", $id);
+					$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
+					$stmt->bindParam(":id", $id);
 					$stmt->execute();
-					$result = $stmt->get_result();
-					$row = $result->fetch_array();
+					$result = $stmt->fetchAll();
+					$row = $result[0];
+					
 					$firstname = $row["firstname"];
 					$lastname = $row["lastname"];
 					$email = $row["email"];
 					
+					if (!empty($errorMessage)) {
+						echo($errorMessage);
+					}
 					echo("<h2>" . $firstname . " " . $lastname . "</h2>");
 					echo("<p id=\"label\">Email: " . $email . "</p>");
 				?>
