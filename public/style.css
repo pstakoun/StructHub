@@ -18,13 +18,15 @@ h2 {
 }
 
 #titleBar {
-    margin-bottom: 16px;
-	height: 64px;
+	height: 48px;
+	width: 100%;
     background-color: #181818;
+	position: fixed;
+	z-index: 100;
 }
 
 #titleBar > #titleBarWrap {
-	width: 512px;
+	width: 800px;
 	text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -32,18 +34,37 @@ h2 {
 
 #titleBar > #titleBarWrap > #titleBarLogo {
 	float: left;
-	height: 48px;
-	width: 48px;
+	height: 32px;
+	width: 32px;
     margin-top: 8px;
 }
 
+#titleBar > #titleBarWrap > #menu {
+	float: center;
+}
+
+#titleBar > #titleBarWrap > #menu > #nav  {
+    text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: darkred;
+    font-weight: bold;
+    line-height: 48px;
+	padding-right: 4px;
+}
+
+#titleBar > #titleBarWrap > #menu > #nav + #nav  {
+    padding-left: 8px;
+    border-left: solid #520C0C 1px;
+}
+
 #content {
+	padding-top: 64px;
     position: relative;
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 16px;
     height: 150%;
-    width: 952px;
+    width: 800px;
 }
 
 #content > #updateStatus > #statusText {
@@ -71,26 +92,10 @@ h2 {
     width: 320px;
 }
 
-#content > #sidebar {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-	width: 128px;
-    height: inherit;
-}
-
 #form {
     width: 512px;
     margin-left: auto;
     margin-right: auto;
-}
-
-#nav {
-    text-decoration: none;
-    font-family: Consolas, monaco, monospace; font-size: 18px;
-    color: #181818;
-    font-weight: bold;
-    line-height: 32px;
 }
 
 #label {

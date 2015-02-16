@@ -83,11 +83,9 @@
 		<div id="titleBar">
 			<div id="titleBarWrap">
 				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
+					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
 				</div>
-                <div>
-                    <h1>StructHub</h1>
-                </div>
+                <?php include_once("menu.php"); ?>
 			</div>
 		</div>
 		
@@ -173,8 +171,6 @@
 					}
 				?>
             </div>
-            
-            <?php include_once("sidebar.php"); ?>
         </div>
         
 	</body>

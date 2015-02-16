@@ -53,7 +53,7 @@
 		<div id="titleBar">
 			<div id="titleBarWrap">
 				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
+					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
 				</div>
                 <div>
                     <h1>StructHub</h1>
@@ -62,9 +62,9 @@
 		</div>
 		
 		<div id="form">
-            <?php if (!empty($errorMessage)) { echo($errorMessage); } ?>
             <form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
 				<table style="margin: 0 auto;">
+					<?php if (!empty($errorMessage)) { echo("<tr><td colspan=\"2\">" . $errorMessage . "</td></tr>"); } ?>
 					<tr>
 						<td id="label" align="right">Email: </td>
 						<td id="label"><input type="email" name="email" /></td>

@@ -33,7 +33,7 @@
 		$result = $stmt->fetchAll();
 		
 		// Validate name
-		if (!(ctype_alpha($firstname) && ctype_alpha($lastname))) {
+		if (empty($firstname) || empty($lastname)) {
 			$postValid = False;
 			$errorMessage = "<p id=\"error\">Name invalid.</p>";
 		// Validate email
@@ -67,10 +67,10 @@
 		<div id="titleBar">
 			<div id="titleBarWrap">
 				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=48px height=48px></a>
+					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
 				</div>
 				<div>
-					<h1>StructHub</h1>
+					<?php include_once("menu.php"); ?>
 				</div>
 			</div>
 		</div>
@@ -79,9 +79,9 @@
 			<?php
 				if (!$postValid) {
 			?>
-				<?php echo($errorMessage); ?>
 				<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
 					<table style="margin: 0 auto;">
+						<?php if (!empty($errorMessage)) { echo("<tr><td colspan=\"2\">" . $errorMessage . "</td></tr>"); } ?>
 						<tr>
 							<td id="label" align="right">First Name: </td>
 							<td id="label"><input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></td>
