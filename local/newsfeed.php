@@ -40,7 +40,7 @@
 	
 	foreach (array_reverse($news) as $status) {
 		$stmt = $conn->prepare("SELECT * FROM users WHERE id = :posterid");
-		$stmt->bind_param(":posterid", $status["posterid"]);
+		$stmt->bindParam(":posterid", $status["posterid"]);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 		$row = $result[0];
