@@ -30,6 +30,7 @@
         <div id="content">
             <div id = "profile">
                 <?php
+					$errorMessage = "";
 					// Connect to database
 					try {
 						$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");

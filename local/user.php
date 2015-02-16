@@ -11,6 +11,7 @@
 		$username = htmlspecialchars($_GET["id"]);
 	}
 	
+	$errorMessage = "";
 	// Connect to database
 	try {
 		$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");

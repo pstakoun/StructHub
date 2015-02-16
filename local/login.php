@@ -7,6 +7,7 @@
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
 		
+		$errorMessage = "";
 		// Connect to database
 		try {
 			$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");

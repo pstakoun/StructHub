@@ -7,6 +7,7 @@
 		<?php
 			session_start();
 			
+			$errorMessage = "";
 			// Connect to database
 			try {
 				$conn = new PDO("mysql:host=localhost;dbname=socialnetwork", "pstakoun", "yJcRNzpSaEXatKqc");

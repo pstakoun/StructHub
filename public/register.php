@@ -7,6 +7,7 @@
 		<?php
 			session_start();
 			
+			$errorMessage = "";
 			// Connect to database
 			try {
 				$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
