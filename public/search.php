@@ -10,6 +10,7 @@
 	if (isset($_POST["query"])) { $query = $_POST["query"]; }
 	if (isset($_POST["type"])) { $type = $_POST["type"]; }
 	
+	$errorMessage = "";
 	// Connect to database
 	try {
 		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
