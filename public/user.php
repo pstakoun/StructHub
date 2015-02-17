@@ -30,38 +30,44 @@
 			$row = $result[0];
 			$userid = $row["id"];
 			
-			$stmt = $conn->prepare("SELECT * FROM contacts WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-			$stmt->bindParam(":id", $id);
-			$stmt->bindParam(":userid", $userid);
-			$stmt->execute();
-			$result = $stmt->fetchAll();
-			if (empty($result)) {
-				$stmt = $conn->prepare("INSERT INTO contacts(user1, user2, status) VALUES (:id, :userid, 0)");
+			if (isset($_POST["removeContact"])) {
+				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 			}
-			else {
-				if (isset($_POST["removeContact"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
+			if (isset($_POST["acceptContactRequest"])) {
+				$stmt = $conn->prepare("UPDATE contacts SET status = 2 WHERE user1 = :userid AND user2 = :id");
+				$stmt->bindParam(":id", $id);
+				$stmt->bindParam(":userid", $userid);
+				$stmt->execute();
+			}
+			if (isset($_POST["declineContactRequest"])) {
+				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE user1 = :userid AND user2 = :id");
+				$stmt->bindParam(":id", $id);
+				$stmt->bindParam(":userid", $userid);
+				$stmt->execute();
+			}
+			if (isset($_POST["revokeContactRequest"])) {
+				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE user1 = :id AND user2 = :userid");
+				$stmt->bindParam(":id", $id);
+				$stmt->bindParam(":userid", $userid);
+				$stmt->execute();
+			}
+			if (isset($_POST["addContact"])) {
+				$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND user2 = :userid");
+				$stmt->bindParam(":id", $id);
+				$stmt->bindParam(":userid", $userid);
+				$stmt->execute();
+				$result = $stmt->fetchAll();
+				if (empty($result)) {
+					$stmt = $conn->prepare("INSERT INTO contacts(user1, user2, status) VALUES (:id, :userid, 1)");
 					$stmt->bindParam(":id", $id);
 					$stmt->bindParam(":userid", $userid);
 					$stmt->execute();
 				}
-				if (isset($_POST["acceptContactRequest"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 2 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
-					$stmt->execute();
-				}
-				if (isset($_POST["deleteContactRequest"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
-					$stmt->bindParam(":id", $id);
-					$stmt->bindParam(":userid", $userid);
-					$stmt->execute();
-				}
-				if (isset($_POST["addContact"])) {
-					$stmt = $conn->prepare("UPDATE contacts SET status = 1 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
+				else {
+					$stmt = $conn->prepare("UPDATE contacts SET status = 1 WHERE user1 = :id AND user2 = :userid");
 					$stmt->bindParam(":id", $id);
 					$stmt->bindParam(":userid", $userid);
 					$stmt->execute();
@@ -150,7 +156,7 @@
 						else if (in_array($userid, $sent)) {
 						?>
 							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
-								<p id="label"><input type="submit" name="deleteContactRequest" value="Delete Contact Request" /></p>
+								<p id="label"><input type="submit" name="revokeContactRequest" value="Revoke Contact Request" /></p>
 							</form>
 						<?php
 						}
@@ -158,6 +164,9 @@
 						?>
 							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
 								<p id="label"><input type="submit" name="acceptContactRequest" value="Accept Contact Request" /></p>
+							</form>
+							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
+								<p id="label"><input type="submit" name="declineContactRequest" value="Decline Contact Request" /></p>
 							</form>
 						<?php
 						}

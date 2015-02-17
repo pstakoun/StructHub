@@ -6,7 +6,7 @@ body {
 h1 {
     font-family: Consolas, monaco, monospace; font-size: 40px;
     color: darkred;
-    line-height: 64px;
+    line-height: 48px;
     margin: 0px;
 }
 
@@ -15,6 +15,21 @@ h2 {
     color: #181818;
     margin: 0px;
     text-align: center;
+}
+
+h3 {
+    font-family: Consolas, monaco, monospace; font-size: 24px;
+    color: #181818;
+    margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+h4 {
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: #181818;
+    margin-top: 8px;
+	margin-bottom: 8px;
+	text-align: center;
 }
 
 #titleBar {
@@ -93,6 +108,7 @@ h2 {
 }
 
 #form {
+	padding-top: 64px;
     width: 512px;
     margin-left: auto;
     margin-right: auto;
@@ -118,6 +134,7 @@ h2 {
 }
 
 #statusUpdate {
+	position: relative;
     background-color: white;
 	margin-top: 8px;
 	margin-bottom: 8px;
@@ -125,6 +142,14 @@ h2 {
 	border: 1px solid;
 	border-color: gray;
 	border-radius: 5px;
+}
+
+#statusUpdate  > #timestamp {
+	position: absolute;
+    right: 8px;
+	top: 8px;
+	font-family: Consolas, monaco, monospace; font-size: 10px;
+    color: #181818;
 }
 
 #user {
@@ -138,4 +163,13 @@ h2 {
     font-family: Consolas, monaco, monospace; font-size: 14px;
     color: #181818;
     font-weight: 500;
+}
+
+#conversation {
+	margin: 8px;
+}
+
+#conversation > #message {
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: #181818;
 }

@@ -7,8 +7,8 @@
 	$id = $_SESSION["id"];
 	$query = "";
 	$type = null;
-	if (isset($_POST["query"])) { $query = $_POST["query"]; }
-	if (isset($_POST["type"])) { $type = $_POST["type"]; }
+	if (isset($_GET["query"])) { $query = $_GET["query"]; }
+	if (isset($_GET["type"])) { $type = $_GET["type"]; }
 	
 	$errorMessage = "";
 	// Connect to database
@@ -110,10 +110,10 @@
 		</div>
 		
         <div id="content">
-			<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-				<p id="label">Search for user: <input type="text" name="query" value=<?php echo("\"" . $query . "\""); ?> />
+			<form method="get" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
 				<input type="hidden" name="type" value="user" />
-				<input type="submit" name="search" value="Search" /></p>
+				<p id="label">Search for user: <input type="text" name="query" value=<?php echo("\"" . $query . "\""); ?> />
+				<input type="submit" value="Search" /></p>
 			</form>
             <div id = "results">
                 <?php

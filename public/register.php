@@ -33,7 +33,7 @@
 		$result = $stmt->fetchAll();
 		
 		// Validate name
-		if (empty($firstname) || empty($lastname)) {
+		if (empty($firstname) || empty($lastname) || ctype_space($firstname) || ctype_space($lastname)) {
 			$postValid = False;
 			$errorMessage = "<p id=\"error\">Name invalid.</p>";
 		// Validate email
@@ -70,8 +70,8 @@
 					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
 				</div>
 				<div>
-					<?php include_once("menu.php"); ?>
-				</div>
+                    <h1>StructHub</h1>
+                </div>
 			</div>
 		</div>
 		

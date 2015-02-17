@@ -26,7 +26,7 @@
 	}
 	
 	// Get news
-	$news = [];
+	/*$news = [];
 	foreach ($contacts as $contact) {
 		$stmt = $conn->prepare("SELECT * FROM updates WHERE posterid = :contact");
 		$stmt->bindParam(":contact", $contact);
@@ -35,7 +35,19 @@
 		foreach ($result as $row) {
 			$news[] = $row;
 		}
+	}*/
+	for ($i = 0; $i < count($contacts); $i++) {
+		$contacts[$i] = "\"" . $contacts[$i] . "\"";
 	}
+	$news = [];
+	$ids = "\"" . $id . "\"";
+	if (!empty($contacts)) {
+		$ids = $ids . "," . join(",", $contacts);
+	}
+	$stmt = $conn->prepare("SELECT * FROM updates WHERE posterid IN (" . $ids . ")");
+	//$stmt->bindParam(":ids", $ids);
+	$stmt->execute();
+	$news = $stmt->fetchAll();
 	
 	echo("<h2>News</h2>");
 	
@@ -46,8 +58,10 @@
 		$result = $stmt->fetchAll();
 		$row = $result[0];
 		$name = $row["firstname"] . " " . $row["lastname"];
+		$timestamp = $status["datecreated"];
 		echo("<div id=\"statusUpdate\">");
 			echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+			echo("<div id=\"timestamp\">" . $timestamp . "</div>");
 			echo("<p id=\"status\">" . $status["status"] . "</p>");
 		echo("</div>");
 	}

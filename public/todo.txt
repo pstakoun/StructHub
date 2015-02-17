@@ -1,7 +1,3 @@
-Centre title
-Show each user their own posts
-Sort newsfeed by post time
-Show timestamp on each post
-Organize contacts
+Set up messaging
 Create logo
 Send confirmation email

@@ -27,7 +27,6 @@
 		
         <div id="content">
             <div id = "contacts">
-				<h2>Contacts</h2>
                 <?php
 					$errorMessage = "";
 					// Connect to database
@@ -40,6 +39,9 @@
 					
 					// Get contacts
 					$contacts = [];
+					$sent = [];
+					$received = [];
+					
 					$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 2");
 					$stmt->bindParam(":id", $id);
 					$stmt->execute();
@@ -59,21 +61,51 @@
 					$stmt->execute();
 					$result = $stmt->fetchAll();
 					foreach ($result as $row) {
-						$contacts[] = $row["user2"];
+						$sent[] = $row["user2"];
 					}
 					$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 1");
 					$stmt->bindParam(":id", $id);
 					$stmt->execute();
 					$result = $stmt->fetchAll();
 					foreach ($result as $row) {
-						$contacts[] = $row["user1"];
+						$received[] = $row["user1"];
 					}
 				?>
-					<form method="post" action="search.php">
-						<p id="label">Search for user: <input type="text" name="query" />
-						<input type="hidden" name="type" value="user" />
-						<input type="submit" name="search" value="Search" /></p>
-					</form>
+				<form method="get" action="search.php">
+					<input type="hidden" name="type" value="user" />
+					<p id="label">Search for user: <input type="text" name="query" />
+					<input type="submit" value="Search" /></p>
+				</form>
+				<?php
+					if (!empty($received)) {
+						echo("<h3>Received Requests</h3>");
+					}
+					foreach ($received as $contact) {
+						$stmt = $conn->prepare("SELECT * FROM users WHERE id = :contact");
+						$stmt->bindParam(":contact", $contact);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						$row = $result[0];
+						$name = $row["firstname"] . " " . $row["lastname"];
+						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
+					}
+				?>
+				
+				<?php
+					if (!empty($sent)) {
+						echo("<h3>Sent Requests</h3>");
+					}
+					foreach ($sent as $contact) {
+						$stmt = $conn->prepare("SELECT * FROM users WHERE id = :contact");
+						$stmt->bindParam(":contact", $contact);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						$row = $result[0];
+						$name = $row["firstname"] . " " . $row["lastname"];
+						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
+					}
+				?>
+				<h3>Contacts</h3>
 				<?php
 					foreach ($contacts as $contact) {
 						$stmt = $conn->prepare("SELECT * FROM users WHERE id = :contact");
@@ -84,7 +116,6 @@
 						$name = $row["firstname"] . " " . $row["lastname"];
 						echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
 					}
-					
 				?>
             </div>
         </div>
