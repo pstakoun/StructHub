@@ -1,5 +1,6 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();

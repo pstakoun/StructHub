@@ -1,10 +1,12 @@
 <?php
 	session_start();
+	// Check for session
 	if (isset($_SESSION["id"])) {
 		header("Location: index.php");
 		die();
 	}
 	
+	// Import library for backwards compatibility
 	require("lib/password.php");
 	
 	$errorMessage = "";
@@ -15,18 +17,20 @@
 	} catch(PDOException $e) {
 		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
-	$postValid = True;
-	$errorMessage = "";
 	
+	// Initialize registration validity
+	$postValid = True;
 	if (empty($_POST)) {
 		$postValid = False;
 	} else {
+		// Get submitted information
 		$firstname = htmlspecialchars($_POST["firstname"]);
 		$lastname = htmlspecialchars($_POST["lastname"]);
 		$email = htmlspecialchars($_POST["email"]);
 		$password = htmlspecialchars($_POST["password"]);
 		$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
 		
+		// Check for email in database
 		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
 		$stmt->bindParam(":email", $email);
 		$stmt->execute();
@@ -48,6 +52,7 @@
 		} else if ($password != $confirmpassword) {
 			$postValid = False;
 			$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
+		// Check for email availability
 		} else if (!empty($result)) {
 			$postValid = False;
 			$errorMessage = "<p id=\"error\">Email in use.</p>";
@@ -77,6 +82,7 @@
 		
 		<div id="form">
 			<?php
+				// Display registration form if submitted details are invalid
 				if (!$postValid) {
 			?>
 				<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
@@ -140,9 +146,10 @@
 					$result = $stmt->fetchAll();
 				}
 				
+				// Hash password
 				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
 				
-				// Create query
+				// Create user
 				$stmt = $conn->prepare("INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (:id, :username, :firstname, :lastname, :email, :password)");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":username", $username);
@@ -155,6 +162,7 @@
 				if (!empty($errorMessage)) {
 					echo($errorMessage);
 				} else {
+					// TODO: send confirmation email
 					echo("<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>");
 				}
 			} ?>

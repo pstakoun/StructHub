@@ -1,5 +1,6 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();
@@ -48,11 +49,13 @@
 					$lastname = $row["lastname"];
 					$email = $row["email"];
 					
+					// Display user information
+					echo("<h2>" . $firstname . " " . $lastname . "</h2>");
+					echo("<p id=\"label\">Email: " . $email . "</p>");
+					
 					if (!empty($errorMessage)) {
 						echo($errorMessage);
 					}
-					echo("<h2>" . $firstname . " " . $lastname . "</h2>");
-					echo("<p id=\"label\">Email: " . $email . "</p>");
 				?>
             </div>
         </div>

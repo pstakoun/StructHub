@@ -1,12 +1,15 @@
 <?php
+	// Import library for backwards compatibility
 	require("lib/password.php");
 
     session_start();
+	// Check for session
     if (isset($_SESSION["id"])) {
         header("Location: index.php");
 		die();
     }
 	else if (!empty($_POST)) {
+		// Get submitted email and password
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
 		
@@ -19,21 +22,24 @@
 			$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 		}
 		
-		// Get user id from database
+		// Attempt to get user id from given email
 		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
 		$stmt->bindParam(":email", $email);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 		
+		// Display error if user not found
 		if (empty($result)) {
 			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
-		// Set user id
 		} else {
 			$row = $result[0];
+			// Verify password
 			if (password_verify($password, $row["password"])) {
+				// Create session
 				$_SESSION["id"] = $row["id"];
 				header("Location: index.php");
 				die();
+			// Display error if password incorrect
 			} else {
 				if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
 			}

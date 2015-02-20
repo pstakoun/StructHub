@@ -1,10 +1,13 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();
     }
 	$id = $_SESSION["id"];
+	
+	// Get query and type from url
 	$query = "";
 	$type = null;
 	if (isset($_GET["query"])) { $query = $_GET["query"]; }
@@ -43,13 +46,15 @@
 		$users = [];
 		$tempusers = [];
 		$name = preg_split('/\s+/', $query);
-		
+		// Check if query is only 1 argument
 		if (count($name) == 1) {
 			$n = $name[0];
-			$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
+			// Get users from query
+			$stmt = $conn->prepare("SELECT * FROM users WHERE firstname = :n OR lastname = :n");
 			$stmt->bindParam(":n", $n);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
+			// Store found users
 			foreach ($result as $row) {
 				if (in_array($row["id"], $contacts)) {
 					array_unshift($users, $row["id"]);
@@ -58,13 +63,31 @@
 					$users[] = $row["id"];
 				}
 			}
+			$ln = "%" . $n . "%";
+			// Get partial matches
+			$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
+			$stmt->bindParam(":n", $ln);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			// Store found users
+			foreach ($result as $row) {
+				if (in_array($row["id"], $contacts) && !in_array($row["id"], $users)) {
+					array_unshift($users, $row["id"]);
+				}
+				else if (!in_array($row["id"], $users)) {
+					$users[] = $row["id"];
+				}
+			}
 		}
 		else {
+			// Check each query argument for matching users
 			foreach ($name as $n) {
-				$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
+				// Get users from argument
+				$stmt = $conn->prepare("SELECT * FROM users WHERE firstname = :n OR lastname = :n");
 				$stmt->bindParam(":n", $n);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
+				// Store users with more than 1 matching arguments before others
 				foreach ($result as $row) {
 					if (in_array($row["id"], $tempusers)) {
 						if (!in_array($row["id"], $users)) {
@@ -81,12 +104,44 @@
 					}
 				}
 			}
+			// Add users with only 1 matching argument
+			foreach ($tempusers as $u) {
+				if (!in_array($u, $users)) {
+					$users[] = $u;
+				}
+			}
+			// Get partial matches for each query argument
+			foreach ($name as $n) {
+				$ln = "%" . $n . "%";
+				$stmt = $conn->prepare("SELECT * FROM users WHERE firstname LIKE :n OR lastname LIKE :n");
+				$stmt->bindParam(":n", $ln);
+				$stmt->execute();
+				$result = $stmt->fetchAll();
+				// Store users with more than 1 partially matching arguments before others
+				foreach ($result as $row) {
+					if (in_array($row["id"], $tempusers)) {
+						if (!in_array($row["id"], $users)) {
+							if (in_array($row["id"], $contacts)) {
+								array_unshift($users, $row["id"]);
+							}
+							else {
+								$users[] = $row["id"];
+							}
+						}
+					}
+					else {
+						$tempusers[] = $row["id"];
+					}
+				}
+			}
+			// Add users with only 1 partially matching argument
 			foreach ($tempusers as $u) {
 				if (!in_array($u, $users)) {
 					$users[] = $u;
 				}
 			}
 		}
+		// Return found users
 		return $users;
 	}
 ?>
@@ -117,27 +172,32 @@
 			</form>
             <div id = "results">
                 <?php
-					// Display search results
+					// Display search results depending on given type
 					switch ($type) {
 						case "user":
-							// Get results
+							// Get users from query
 							$users = getUsers($conn, $id, $query);
+							//Display found users
 							if (count($users) == 0) {
 								if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">No results found.</p>"; }
-							}
-							foreach ($users as $u) {
-								$stmt = $conn->prepare("SELECT * FROM users WHERE id = :u");
-								$stmt->bindParam(":u", $u);
-								$stmt->execute();
-								$result = $stmt->fetchAll();
-								$row = $result[0];
-								$name = $row["firstname"] . " " . $row["lastname"];
-								echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
+							} else {
+								foreach ($users as $u) {
+									// Get user information from id
+									$stmt = $conn->prepare("SELECT * FROM users WHERE id = :u");
+									$stmt->bindParam(":u", $u);
+									$stmt->execute();
+									$result = $stmt->fetchAll();
+									$row = $result[0];
+									$name = $row["firstname"] . " " . $row["lastname"];
+									echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a><br>");
+								}
 							}
 							break;
 						default:
+							// Set error message if type invalid
 							if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">No results found.</p>"; }
 					}
+					// Display error message if set
 					if (!empty($errorMessage)) { echo($errorMessage); }
 				?>
             </div>

@@ -1,9 +1,17 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();
     }
+	$id = $_SESSION["id"];
+	
+	// Get user from url
+	$activeConversation = null;
+	if (!empty($_GET["id"])) {
+		$activeConversation = htmlspecialchars($_GET["id"]);
+	}
 	
 	$errorMessage = "";
 	// Connect to database
@@ -55,11 +63,12 @@
 					
 					// Get active conversations
 					$conversations = [];
-					$stmt = $conn->prepare("SELECT * FROM messages WHERE sender = :id OR recipient = :id");
+					$stmt = $conn->prepare("SELECT * FROM messages WHERE sender = :id OR recipient = :id ORDER BY datecreated DESC");
 					$stmt->bindParam(":id", $id);
 					$stmt->execute();
-					$result = $stmt->fetchAll();
-					foreach ($result as $row) {
+					$messages = $stmt->fetchAll();
+					// Store found conversations
+					foreach ($messages as $row) {
 						$sender = $row["sender"];
 						$recipient = $row["recipient"];
 						if ($sender == $id && !in_array($recipient, $conversations)) {
@@ -69,26 +78,50 @@
 							$conversations[] = $sender;
 						}
 					}
-					
-					echo("<h2>Conversations</h2>");
+				?>
+				<h2>Conversations</h2>
+				<?php
+					// Check for ongoing conversations
 					if (!empty($conversations)) {
+						// Display conversations
 						foreach ($conversations as $contact) {
+							// Get user from id
 							$stmt = $conn->prepare("SELECT * FROM users WHERE id = :contact");
 							$stmt->bindParam(":contact", $contact);
 							$stmt->execute();
 							$result = $stmt->fetchAll();
 							$row = $result[0];
+							// Display conversation
 							echo("<div id=\"conversation\">");
-							echo("<p id=\"user\">" . $row["firstname"] . " " . $row["lastname"] . "</p>");
-							// echo last message
+							echo("<a id=\"user\" href=\"messaging.php?id=" . $row["username"] . "\">" . $row["firstname"] . " " . $row["lastname"] . "</a>");
+							// TODO: echo("<p id=\"message\">" . $row["message"] . "</p>");
 							echo("</div>");
 						}
 					}
-					else {
-						echo("<h4>No active conversations.</h4>");
-					}
 				?>
             </div>
+			<div id = "activeConversation">
+				<?php
+					// Check for active conversation
+					if (!empty($activeConversation)) {
+						// Get user from id
+						$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+						$stmt->bindParam(":username", $activeConversation);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						// Display user if found
+						if (!empty($result)) {
+							$row = $result[0];
+							echo("<h2>" . $row["firstname"] . " " . $row["lastname"] . "</h2>");
+						} else {
+							echo("<h2>User not found.</h2>");
+						}
+					}
+					else {
+						echo("<h3>No active conversation.</h3>");
+					}
+				?>
+			</div>
         </div>
             
 	</body>

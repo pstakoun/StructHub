@@ -1,5 +1,6 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();
@@ -24,9 +25,12 @@
 	$primaryfeed = $row["primaryfeed"];
 	$secondaryfeed = $row["secondaryfeed"];
 	
+	// Post status update if set
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
+		// Check if status update valid
         if (!(empty($statusUpdate) || ctype_space($statusUpdate))) {
+			// Post status update
 			$stmt = $conn->prepare("INSERT INTO updates (status, posterid) VALUES (:statusUpdate, :id)");
 			$stmt->bindParam(":id", $id);
 			$stmt->bindParam(":statusUpdate", $statusUpdate);
@@ -59,6 +63,7 @@
         <div id="content">
             <form id="updateStatus" method="post" action="#">
 				<?php
+					// Display error message if exists
 					if (empty($errorMessage)) {
 						if (!empty($postMessage)) {
 							echo($postMessage);
@@ -71,37 +76,37 @@
                 <input type="submit" name="postStatusUpdate" value="Post" />
             </form>
             
-            <div id="feeds">
-                <div id="primaryFeed">
-                    <?php
-                        switch($primaryfeed) {
-                            case "news":
-                                include_once("newsfeed.php");
-                                break;
-                            case "messages":
-                                include_once("messagefeed.php");
-                                break;
-                            default:
-                                echo($errorMessage);
-                        }
-                    ?>
-                </div>
+			<div id="primaryFeed">
+				<?php
+					// Display primary feed
+					switch($primaryfeed) {
+						case "news":
+							include_once("newsfeed.php");
+							break;
+						case "messages":
+							include_once("messagefeed.php");
+							break;
+						default:
+							echo($errorMessage);
+					}
+				?>
+			</div>
 
-                <div id="secondaryFeed">
-                    <?php
-                        switch($secondaryfeed) {
-                            case "news":
-                                include_once("newsfeed.php");
-                                break;
-                            case "messages":
-                                include_once("messagefeed.php");
-                                break;
-                            default:
-                                echo($errorMessage);
-                        }
-                    ?>
-                </div>
-            </div>
+			<div id="secondaryFeed">
+				<?php
+					// Display secondary feed
+					switch($secondaryfeed) {
+						case "news":
+							include_once("newsfeed.php");
+							break;
+						case "messages":
+							include_once("messagefeed.php");
+							break;
+						default:
+							echo($errorMessage);
+					}
+				?>
+			</div>
 			
         </div>
 	</body>

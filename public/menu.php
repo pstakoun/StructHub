@@ -1,4 +1,5 @@
 <?php
+	// Display navigation menu
 	echo(
 	"<div id=\"menu\">
 		<a id=\"nav\" href=\"index.php\">Home</a>

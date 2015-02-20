@@ -20,16 +20,13 @@ h2 {
 h3 {
     font-family: Consolas, monaco, monospace; font-size: 24px;
     color: #181818;
-    margin-top: 8px;
-	margin-bottom: 8px;
+    margin: 8px;
 }
 
 h4 {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: #181818;
-    margin-top: 8px;
-	margin-bottom: 8px;
-	text-align: center;
+    margin: 8px;
 }
 
 #titleBar {
@@ -78,7 +75,6 @@ h4 {
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 16px;
-    height: 150%;
     width: 800px;
 }
 
@@ -89,22 +85,28 @@ h4 {
     resize: vertical;
 }
 
-#content > #feeds {
-    position: relative;
-    height: 100%;
-    width: 800px;
-}
-
-#content > #feeds > #primaryFeed {
+#content > #primaryFeed {
     position: absolute;
     left: 0px;
     width: 480px;
 }
 
-#content > #feeds > #secondaryFeed {
+#content > #secondaryFeed {
     position: absolute;
     right: 0px;
     width: 320px;
+}
+
+#content > #conversations {
+    position: absolute;
+    left: 0px;
+    width: 320px;
+}
+
+#content > #activeConversation {
+    position: absolute;
+    right: 0px;
+    width: 480px;
 }
 
 #form {
@@ -136,20 +138,21 @@ h4 {
 #statusUpdate {
 	position: relative;
     background-color: white;
-	margin-top: 8px;
-	margin-bottom: 8px;
+	margin: 8px;
 	padding: 8px;
 	border: 1px solid;
 	border-color: gray;
 	border-radius: 5px;
 }
 
-#statusUpdate  > #timestamp {
-	position: absolute;
-    right: 8px;
-	top: 8px;
-	font-family: Consolas, monaco, monospace; font-size: 10px;
-    color: #181818;
+#receivedMessage {
+	position: relative;
+    background-color: white;
+	margin: 8px;
+	padding: 8px;
+	border: 1px solid;
+	border-color: gray;
+	border-radius: 5px;
 }
 
 #user {
@@ -157,6 +160,14 @@ h4 {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: #181818;
     font-weight: bold;
+}
+
+#timestamp {
+	position: absolute;
+    right: 8px;
+	top: 8px;
+	font-family: Consolas, monaco, monospace; font-size: 10px;
+    color: #181818;
 }
 
 #status {
@@ -169,7 +180,8 @@ h4 {
 	margin: 8px;
 }
 
-#conversation > #message {
-    font-family: Consolas, monaco, monospace; font-size: 18px;
+#message {
+    font-family: Consolas, monaco, monospace; font-size: 14px;
     color: #181818;
+    font-weight: 500;
 }

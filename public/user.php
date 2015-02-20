@@ -1,11 +1,13 @@
 <?php
     session_start();
+	// Check for session
     if (!isset($_SESSION["id"])) {
         header("Location: login.php");
         die();
     }
 	$id = $_SESSION["id"];
 	
+	// Get username from url
 	$username = null;
 	if (isset($_GET["id"])) {
 		$username = htmlspecialchars($_GET["id"]);
@@ -20,6 +22,7 @@
 		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
 	}
 	
+	// Get user from given username
 	if (!empty($username)) {
 		// Get user id
 		$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
@@ -30,36 +33,42 @@
 			$row = $result[0];
 			$userid = $row["id"];
 			
+			// Remove contact if needed
 			if (isset($_POST["removeContact"])) {
 				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE (user1 = :id AND user2 = :userid) OR (user1 = :userid AND user2 = :id)");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 			}
+			// Accept contact request if needed
 			if (isset($_POST["acceptContactRequest"])) {
 				$stmt = $conn->prepare("UPDATE contacts SET status = 2 WHERE user1 = :userid AND user2 = :id");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 			}
+			// Decline contact request if needed
 			if (isset($_POST["declineContactRequest"])) {
 				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE user1 = :userid AND user2 = :id");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 			}
+			// Revoke contact request if needed
 			if (isset($_POST["revokeContactRequest"])) {
 				$stmt = $conn->prepare("UPDATE contacts SET status = 0 WHERE user1 = :id AND user2 = :userid");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 			}
+			// Add contact if needed
 			if (isset($_POST["addContact"])) {
 				$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND user2 = :userid");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":userid", $userid);
 				$stmt->execute();
 				$result = $stmt->fetchAll();
+				// Create contact request
 				if (empty($result)) {
 					$stmt = $conn->prepare("INSERT INTO contacts(user1, user2, status) VALUES (:id, :userid, 1)");
 					$stmt->bindParam(":id", $id);
@@ -129,8 +138,10 @@
 						foreach ($result as $row) {
 							$contacts[] = $row["user1"];
 						}
+						
 						$sent = [];
 						$received = [];
+						// Get sent requests
 						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 1");
 						$stmt->bindParam(":id", $id);
 						$stmt->execute();
@@ -138,6 +149,7 @@
 						foreach ($result as $row) {
 							$sent[] = $row["user2"];
 						}
+						// Get received requests
 						$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 1");
 						$stmt->bindParam(":id", $id);
 						$stmt->execute();
@@ -170,7 +182,7 @@
 							</form>
 						<?php
 						}
-						else {
+						else if ($userid != $id) {
 						?>
 							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
 								<p id="label"><input type="submit" name="addContact" value="Add Contact" /></p>
