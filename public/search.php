@@ -10,8 +10,8 @@
 	// Get query and type from url
 	$query = "";
 	$type = null;
-	if (isset($_GET["query"])) { $query = $_GET["query"]; }
-	if (isset($_GET["type"])) { $type = $_GET["type"]; }
+	if (isset($_GET["query"])) { $query = htmlspecialchars($_GET["query"]); }
+	if (isset($_GET["type"])) { $type = htmlspecialchars($_GET["type"]); }
 	
 	$errorMessage = "";
 	// Connect to database

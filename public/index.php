@@ -27,9 +27,9 @@
 	
 	// Post status update if set
     if (isset($_POST["statusUpdate"])) {
-        $statusUpdate = htmlspecialchars($_POST["statusUpdate"]);
+        $statusUpdate = nl2br(htmlspecialchars($_POST["statusUpdate"]));
 		// Check if status update valid
-        if (!(empty($statusUpdate) || ctype_space($statusUpdate))) {
+        if (!(empty($_POST["statusUpdate"]) || ctype_space($_POST["statusUpdate"]))) {
 			// Post status update
 			$stmt = $conn->prepare("INSERT INTO updates (status, posterid) VALUES (:statusUpdate, :id)");
 			$stmt->bindParam(":id", $id);
@@ -40,6 +40,12 @@
 			$errorMessage = "<p id=\"error\">Please enter a valid status update.</p>";
 		}
     }
+	
+	// PRG
+	if ($_POST) {
+		header("Location: " . $_SERVER['REQUEST_URI']);
+		die();
+	}
 ?>
 
 <!DOCTYPE HTML>

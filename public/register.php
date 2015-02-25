@@ -10,6 +10,10 @@
 	require("lib/password.php");
 	
 	$errorMessage = "";
+	if (isset($_SESSION["errorMessage"])) {
+		$errorMessage = $_SESSION["errorMessage"];
+		unset($_SESSION["errorMessage"]);
+	}
 	// Connect to database
 	try {
 		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
@@ -82,90 +86,97 @@
 		
 		<div id="form">
 			<?php
-				// Display registration form if submitted details are invalid
-				if (!$postValid) {
-			?>
-				<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
-					<table style="margin: 0 auto;">
-						<?php if (!empty($errorMessage)) { echo("<tr><td colspan=\"2\">" . $errorMessage . "</td></tr>"); } ?>
-						<tr>
-							<td id="label" align="right">First Name: </td>
-							<td id="label"><input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></td>
-						</tr>
-						<tr>
-							<td id="label" align="right">Last Name: </td>
-							<td id="label"><input type="text" name="lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></td>
-						</tr>
-						<tr>
-							<td id="label" align="right">Email: </td>
-							<td id="label"><input type="email" name="email" value="<?php if (!empty($email)) { echo($email); } ?>" /></td>
-						</tr>
-						<tr>
-							<td id="label" align="right">Password: </td>
-							<td id="label"><input type="password" name="password" /></td>
-						</tr>
-						<tr>
-							<td id="label" align="right">Confirm Password: </td>
-							<td id="label"><input type="password" name="confirmpassword" /></td>
-						</tr>
-						<tr>
-							<td id="label" align="right"><input type="submit" name="register" value="Register" /></td>
-						</tr>
-					</table>
-				</form>
-
-			<?php } else {
-				// Capitalize name
-				$firstname = ucfirst($firstname);
-				$lastname = ucfirst($lastname);
-				
-				// Ensure id is unique
-				$id = uniqid("", true);
-				$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
-				$stmt->bindParam(":id", $id);
-				$stmt->execute();
-				$result = $stmt->fetchAll();
-				while (!empty($result)) {
-					$id = uniqid("", true);
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-				}
-				
-				// Ensure username is unique
-				$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
-				$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
-				$username = $fn . "." . $ln;
-				$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
-				$stmt->bindParam(":username", $username);
-				$stmt->execute();
-				$result = $stmt->fetchAll();
-				$i = 0;
-				while (!empty($result)) {
-					$username = $fn . "." . $ln . ++$i;
-					$stmt->execute();
-					$result = $stmt->fetchAll();
-				}
-				
-				// Hash password
-				$passwordhash = password_hash($password, PASSWORD_DEFAULT);
-				
-				// Create user
-				$stmt = $conn->prepare("INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (:id, :username, :firstname, :lastname, :email, :password)");
-				$stmt->bindParam(":id", $id);
-				$stmt->bindParam(":username", $username);
-				$stmt->bindParam(":firstname", $firstname);
-				$stmt->bindParam(":lastname", $lastname);
-				$stmt->bindParam(":email", $email);
-				$stmt->bindParam(":password", $passwordhash);
-				$stmt->execute();
-				
-				if (!empty($errorMessage)) {
-					echo($errorMessage);
+				if (isset($_SESSION["successMessage"])) {
+					echo($_SESSION["successMessage"]);
+					unset($_SESSION["successMessage"]);
 				} else {
-					// TODO: send confirmation email
-					echo("<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>");
-				}
-			} ?>
+					// Display registration form if submitted details are invalid
+					if (!$postValid) {	?>
+						<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
+							<table style="margin: 0 auto;">
+								<?php if (!empty($errorMessage)) { echo("<tr><td colspan=\"2\">" . $errorMessage . "</td></tr>"); } ?>
+								<tr>
+									<td id="label" align="right">First Name: </td>
+									<td id="label"><input type="text" name="firstname" value="<?php if (!empty($firstname)) { echo($firstname); } ?>" /></td>
+								</tr>
+								<tr>
+									<td id="label" align="right">Last Name: </td>
+									<td id="label"><input type="text" name="lastname" value="<?php if (!empty($lastname)) { echo($lastname); } ?>" /></td>
+								</tr>
+								<tr>
+									<td id="label" align="right">Email: </td>
+									<td id="label"><input type="email" name="email" value="<?php if (!empty($email)) { echo($email); } ?>" /></td>
+								</tr>
+								<tr>
+									<td id="label" align="right">Password: </td>
+									<td id="label"><input type="password" name="password" /></td>
+								</tr>
+								<tr>
+									<td id="label" align="right">Confirm Password: </td>
+									<td id="label"><input type="password" name="confirmpassword" /></td>
+								</tr>
+								<tr>
+									<td id="label" align="right"><input type="submit" name="register" value="Register" /></td>
+								</tr>
+							</table>
+						</form>
+
+			<?php 	} else {
+						// Capitalize name
+						$firstname = ucfirst($firstname);
+						$lastname = ucfirst($lastname);
+						
+						// Ensure id is unique
+						$id = uniqid("", true);
+						$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
+						$stmt->bindParam(":id", $id);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						while (!empty($result)) {
+							$id = uniqid("", true);
+							$stmt->execute();
+							$result = $stmt->fetchAll();
+						}
+						
+						// Ensure username is unique
+						$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
+						$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
+						$username = $fn . "." . $ln;
+						$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
+						$stmt->bindParam(":username", $username);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						$i = 0;
+						while (!empty($result)) {
+							$username = $fn . "." . $ln . ++$i;
+							$stmt->execute();
+							$result = $stmt->fetchAll();
+						}
+						
+						// Hash password
+						$passwordhash = password_hash($password, PASSWORD_DEFAULT);
+						
+						// Create user
+						$stmt = $conn->prepare("INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (:id, :username, :firstname, :lastname, :email, :password)");
+						$stmt->bindParam(":id", $id);
+						$stmt->bindParam(":username", $username);
+						$stmt->bindParam(":firstname", $firstname);
+						$stmt->bindParam(":lastname", $lastname);
+						$stmt->bindParam(":email", $email);
+						$stmt->bindParam(":password", $passwordhash);
+						$stmt->execute();
+						
+						// PRG
+						if (!empty($errorMessage)) {
+							$_SESSION["errorMessage"] = $errorMessage;
+						} else {
+							// TODO: send confirmation email
+							$_SESSION["successMessage"] = "<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>";
+						}
+						header("Location: " . $_SERVER['REQUEST_URI']);
+						die();
+					}
+				}	?>
 		</div>
 	</body>
 </html>

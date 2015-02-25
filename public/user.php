@@ -84,6 +84,12 @@
 			}
 		}
 	}
+	
+	// PRG
+	if ($_POST) {
+		header("Location: " . $_SERVER['REQUEST_URI']);
+		die();
+	}
 ?>
 
 <!DOCTYPE HTML>

@@ -10,7 +10,7 @@
 	if (!empty($messages)) {
 		$stmt = $conn->prepare("SELECT * FROM users WHERE id = :sender");
 		// Create message feed
-		foreach (array_reverse($messages) as $message) {
+		foreach ($messages as $message) {
 			$stmt->bindParam(":sender", $message["sender"]);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
@@ -18,10 +18,10 @@
 			$timestamp = $message["datecreated"];
 			
 			// Display message
-			echo("<div id=\"receivedMessage\">");
+			echo("<div id=\"message\">");
 				echo("<a id=\"user\" href=\"user.php?id=" . $sender["username"] . "\">" . $sender["firstname"] . " " . $sender["lastname"] . "</a>");
 				echo("<div id=\"timestamp\">" . $timestamp . "</div>");
-				echo("<p id=\"message\">" . $message["message"] . "</p>");
+				echo("<p id=\"messageText\">" . $message["message"] . "</p>");
 			echo("</div>");
 		}
 	}

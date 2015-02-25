@@ -145,7 +145,7 @@ h4 {
 	border-radius: 5px;
 }
 
-#receivedMessage {
+#message {
 	position: relative;
     background-color: white;
 	margin: 8px;
@@ -160,6 +160,7 @@ h4 {
     font-family: Consolas, monaco, monospace; font-size: 18px;
     color: #181818;
     font-weight: bold;
+	line-height: 32px;
 }
 
 #timestamp {
@@ -174,14 +175,31 @@ h4 {
     font-family: Consolas, monaco, monospace; font-size: 14px;
     color: #181818;
     font-weight: 500;
+	word-wrap: break-word;
 }
 
 #conversation {
 	margin: 8px;
 }
 
-#message {
+#messageText {
     font-family: Consolas, monaco, monospace; font-size: 14px;
     color: #181818;
     font-weight: 500;
+	word-wrap: break-word;
+}
+
+#content > #activeConversation > #messages {
+	width: 480px;
+}
+
+#content > #activeConversation > #messages > #sendMessage {
+	padding: 8px;
+}
+
+#content > #activeConversation > #messages > #sendMessage > #messageInput {
+	width: 100%;
+    min-height: 32px;
+    max-height: 256px;
+    resize: vertical;
 }
