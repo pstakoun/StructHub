@@ -6,6 +6,8 @@
 		die();
 	}
 	
+	ob_start();
+	
 	// Import library for backwards compatibility
 	require("lib/password.php");
 	
