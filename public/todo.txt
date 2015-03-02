@@ -1,2 +1,0 @@
-Create logo
-Set up email confirmation

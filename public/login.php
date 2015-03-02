@@ -31,6 +31,10 @@
 		// Display error if user not found
 		if (empty($result)) {
 			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
+		} else if ($result[0]["confirmed"] == 0) {
+			$_SESSION["errorMessage"] = "<p id=\"error\">Confirm your account before logging in.</p>";
+			header("Location: confirm.php");
+			die();
 		} else {
 			$row = $result[0];
 			// Verify password
@@ -81,7 +85,10 @@
 					</tr>
 					<tr>
 						<td id="label" align="right"><input type="submit" name="login" value="Login" /></td>
-						<td id="link"><a href="register.php">Don't have an account? Register now!</a></td>
+						<td id="link"><a href="recover.php">Forgot your password?</a></td>
+					</tr>
+					<tr>
+						<td id="link" colspan="2"><a href="register.php">Don't have an account? Register now!</a></td>
 					</tr>
 				</table>
                 

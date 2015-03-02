@@ -168,11 +168,42 @@
 						$stmt->bindParam(":password", $passwordhash);
 						$stmt->execute();
 						
+						// Ensure key is unique
+						$key = uniqid();
+						$stmt = $conn->prepare("SELECT * FROM confirmations WHERE confirmkey = :key");
+						$stmt->bindParam(":key", $key);
+						$stmt->execute();
+						$result = $stmt->fetchAll();
+						while (!empty($result)) {
+							$key = uniqid();
+							$stmt->execute();
+							$result = $stmt->fetchAll();
+						}
+						
+						// Create confirmation key
+						$stmt = $conn->prepare("INSERT INTO confirmations (id, confirmkey) VALUES (:id, :key)");
+						$stmt->bindParam(":id", $id);
+						$stmt->bindParam(":key", $key);
+						$stmt->execute();
+						
 						// PRG
 						if (!empty($errorMessage)) {
 							$_SESSION["errorMessage"] = $errorMessage;
 						} else {
-							// TODO: send confirmation email
+							// Send confirmation email
+							$subject = "StructHub Account Confirmation";
+							$message = "
+								<html>
+									<body>
+										<p>Use this link to confirm your StructHub account.</p>
+										<p><a href=\"http://structhub.com/confirm.php?id=" . $key . "\">" . "http://structhub.com/confirm.php?id=" . $key . "</a></p>
+									</body>
+								</html>
+							";
+							$headers = "MIME-Version: 1.0" . "\r\n";
+							$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
+							$headers .= "From: donotreply@structhub.com";
+							mail($email, $subject, $message, $headers);
 							$_SESSION["successMessage"] = "<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>";
 						}
 						header("Location: " . $_SERVER['REQUEST_URI']);
