@@ -1,3 +1,3 @@
 SocialNetwork
 =============
-A social network.
+A social network for developers and technological entrepreneurs.
