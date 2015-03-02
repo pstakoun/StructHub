@@ -54,22 +54,27 @@
 	
 	echo("<h2>News</h2>");
 	
-	// Display status updates
-	foreach ($news as $status) {
-		// Get user from poster id
-		$stmt = $conn->prepare("SELECT * FROM users WHERE id = :posterid");
-		$stmt->bindParam(":posterid", $status["posterid"]);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		$row = $result[0];
-		$name = $row["firstname"] . " " . $row["lastname"];
-		$timestamp = $status["datecreated"];
-		
-		// Display status update
-		echo("<div id=\"statusUpdate\">");
-			echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
-			echo("<div id=\"timestamp\">" . $timestamp . "</div>");
-			echo("<p id=\"status\">" . $status["status"] . "</p>");
-		echo("</div>");
+	if (!empty($news)) {
+		// Display status updates
+		foreach ($news as $status) {
+			// Get user from poster id
+			$stmt = $conn->prepare("SELECT * FROM users WHERE id = :posterid");
+			$stmt->bindParam(":posterid", $status["posterid"]);
+			$stmt->execute();
+			$result = $stmt->fetchAll();
+			$row = $result[0];
+			$name = $row["firstname"] . " " . $row["lastname"];
+			$timestamp = $status["datecreated"];
+			
+			// Display status update
+			echo("<div id=\"statusUpdate\">");
+				echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+				echo("<div id=\"timestamp\">" . $timestamp . "</div>");
+				echo("<p id=\"status\">" . $status["status"] . "</p>");
+			echo("</div>");
+		}
+	} else {
+		echo("<h4>No news.</h4>");
 	}
+	
 ?>
