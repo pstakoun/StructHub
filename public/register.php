@@ -11,6 +11,9 @@
 	// Import library for backwards compatibility
 	require("lib/password.php");
 	
+	// Import mailer
+	require("lib/PHPMailer/PHPMailerAutoload.php");
+	
 	$errorMessage = "";
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
@@ -200,16 +203,31 @@
 									</body>
 								</html>
 							";
-							$headers = "MIME-Version: 1.0" . "\r\n";
-							$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
-							$headers .= "From: donotreply@structhub.com";
-							mail($email, $subject, $message, $headers);
-							$_SESSION["successMessage"] = "<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>";
+							$altmessage = "Use this link to confirm your StructHub account: http://structhub.com/confirm.php?id=" . $key;
+							
+							$mail = new PHPMailer;
+
+							$mail->isSMTP();
+							$mail->Host = 'localhost';
+							$mail->Port = 25;
+
+							$mail->From = 'donotreply@structhub.com';
+							$mail->addAddress($email);
+							$mail->isHTML(true);
+
+							$mail->Subject = $subject;
+							$mail->Body = $message;
+							$mail->AltBody = $altmessage;
+							if($mail->send()) {
+								$_SESSION["successMessage"] = "<p id=\"label\">Registration successful! A confirmation email has been sent to " . $email . ".</p>";
+							} else {
+								$_SESSION["successMessage"] = $mail->ErrorInfo;
+							}
 						}
 						header("Location: " . $_SERVER['REQUEST_URI']);
 						die();
 					}
-				}	?>
+				} ?>
 		</div>
 	</body>
 </html>

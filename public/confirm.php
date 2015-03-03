@@ -8,6 +8,9 @@
 	
 	ob_start();
 	
+	// Import mailer
+	require("lib/PHPMailer/PHPMailerAutoload.php");
+	
 	$errorMessage = "";
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
@@ -78,11 +81,26 @@
 					</body>
 				</html>
 			";
-			$headers = "MIME-Version: 1.0" . "\r\n";
-			$headers .= "Content-type:text/html; charset=UTF-8" . "\r\n";
-			$headers .= "From: donotreply@structhub.com";
-			mail($email, $subject, $message, $headers);
-			$_SESSION["successMessage"] = "<p id=\"label\">Confirmation email sent.</p>";
+			$altmessage = "Use this link to confirm your StructHub account: http://structhub.com/confirm.php?id=" . $key;
+			
+			$mail = new PHPMailer;
+
+			$mail->isSMTP();
+			$mail->Host = 'localhost';
+			$mail->Port = 25;
+
+			$mail->From = 'donotreply@structhub.com';
+			$mail->addAddress($email);
+			$mail->isHTML(true);
+
+			$mail->Subject = $subject;
+			$mail->Body = $message;
+			$mail->AltBody = $altmessage;
+			if($mail->send()) {
+				$_SESSION["successMessage"] = "<p id=\"label\">A confirmation email has been sent to " . $email . ".</p>";
+			} else {
+				$_SESSION["successMessage"] = $mail->ErrorInfo;
+			}
 		}
 	}
 	// Check if confirmation key set

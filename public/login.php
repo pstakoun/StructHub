@@ -31,18 +31,20 @@
 		// Display error if user not found
 		if (empty($result)) {
 			if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
-		} else if ($result[0]["confirmed"] == 0) {
-			$_SESSION["errorMessage"] = "<p id=\"error\">Confirm your account before logging in.</p>";
-			header("Location: confirm.php");
-			die();
 		} else {
 			$row = $result[0];
 			// Verify password
 			if (password_verify($password, $row["password"])) {
-				// Create session
-				$_SESSION["id"] = $row["id"];
-				header("Location: index.php");
-				die();
+				if ($result[0]["confirmed"] == 0) {
+					$_SESSION["errorMessage"] = "<p id=\"error\">Confirm your account before logging in.</p>";
+					header("Location: confirm.php");
+					die();
+				} else {
+					// Create session
+					$_SESSION["id"] = $row["id"];
+					header("Location: index.php");
+					die();
+				}
 			// Display error if password incorrect
 			} else {
 				if (empty($errorMessage)) { $errorMessage = "<p id=\"error\">Email or password invalid.</p>"; }
