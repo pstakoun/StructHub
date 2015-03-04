@@ -205,13 +205,14 @@
 							";
 							$altmessage = "Use this link to confirm your StructHub account: http://structhub.com/confirm.php?id=" . $key;
 							
-							$mail = new PHPMailer;
-
+							$mail = new PHPMailer();
+                            //$mail->SMTPAuth = false;
+                            //$mail->SMTPSecure = "ssl";
+                            //$mail->Port = 995;
 							$mail->isSMTP();
-							$mail->Host = 'localhost';
-							$mail->Port = 25;
-
-							$mail->From = 'donotreply@structhub.com';
+							$mail->Host = 'relay-hosting.secureserver.net';
+							$mail->SetFrom('donotreply@structhub.com', 'StructHub');
+							$mail->AddReplyTo('donotreply@structhub.com', 'StructHub');
 							$mail->addAddress($email);
 							$mail->isHTML(true);
 

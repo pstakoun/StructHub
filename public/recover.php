@@ -8,6 +8,9 @@
 	
 	ob_start();
 	
+	// Import library for backwards compatibility
+	require("lib/password.php");
+	
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
 	
@@ -227,13 +230,14 @@
 							";
 							$altmessage = "Use this link to reset your StructHub password. It will be valid for 24 hours: http://structhub.com/recover.php?id=" . $key;
 							
-							$mail = new PHPMailer;
-
+							$mail = new PHPMailer();
+                            //$mail->SMTPAuth = false;
+                            //$mail->SMTPSecure = "ssl";
+                            //$mail->Port = 995;
 							$mail->isSMTP();
-							$mail->Host = 'localhost';
-							$mail->Port = 25;
-
-							$mail->From = 'donotreply@structhub.com';
+							$mail->Host = 'relay-hosting.secureserver.net';
+							$mail->SetFrom('donotreply@structhub.com', 'StructHub');
+							$mail->AddReplyTo('donotreply@structhub.com', 'StructHub');
 							$mail->addAddress($email);
 							$mail->isHTML(true);
 
