@@ -5,6 +5,7 @@
         header("Location: login.php");
         die();
     }
+	$id = $_SESSION["id"];
 ?>
 
 <!DOCTYPE HTML>
@@ -26,7 +27,7 @@
 		</div>
 		
         <div id="content">
-            <div id = "projects">
+            <div id="projects">
                 <!-- Display projects -->
             </div>
         </div>

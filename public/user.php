@@ -111,7 +111,7 @@
 		</div>
 		
         <div id="content">
-            <div id = "profile">
+            <div id="profile">
                 <?php
 					// Get user information
 					$stmt = $conn->prepare("SELECT * FROM users WHERE username = :username");
@@ -126,6 +126,7 @@
 						$userid = $row["id"];
 						$firstname = $row["firstname"];
 						$lastname = $row["lastname"];
+						$bio = $row["bio"];
 						echo("<h2>" . $firstname . " " . $lastname . "</h2>");
 						
 						// Find contacts
@@ -166,8 +167,11 @@
 						
 						if (in_array($userid, $contacts)) {
 						?>
-							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
+							<form style="float:left" method="post" action=<?php echo("user.php?id=" . $username); ?>>
 								<p id="label"><input type="submit" name="removeContact" value="Remove Contact" /></p>
+							</form>
+							<form style="float:right" method="post" action=<?php echo("messaging.php?id=" . $username); ?>>
+								<p id="label"><input type="submit" name="sendMessage" value="Send Message" /></p>
 							</form>
 						<?php
 						}
@@ -193,6 +197,19 @@
 							<form method="post" action=<?php echo("user.php?id=" . $username); ?>>
 								<p id="label"><input type="submit" name="addContact" value="Add Contact" /></p>
 							</form>
+						<?php
+						}
+						
+						if (!empty($bio) && empty($_POST["editBio"])) {
+						?>
+							<div id="bio">
+								<?php echo($bio); ?>
+							</div>
+						<?php
+						}
+						else if (!empty($_POST["editBio"])) {
+						?>
+							<!-- Edit bio. -->
 						<?php
 						}
 					}

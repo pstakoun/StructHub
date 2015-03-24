@@ -80,9 +80,6 @@
 	<body>
 		<div id="titleBar">
 			<div id="titleBarWrap">
-				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
-				</div>
 				<div>
                     <h1>StructHub</h1>
                 </div>
@@ -125,7 +122,6 @@
 								</tr>
 							</table>
 						</form>
-
 			<?php 	} else {
 						// Capitalize name
 						$firstname = ucfirst($firstname);

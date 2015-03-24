@@ -27,7 +27,7 @@
 		</div>
 		
         <div id="content">
-            <div id = "profile">
+            <div id="profile">
                 <?php
 					$errorMessage = "";
 					// Connect to database

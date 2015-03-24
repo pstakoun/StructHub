@@ -163,6 +163,14 @@ h4 {
 	line-height: 32px;
 }
 
+#team {
+    text-decoration: none;
+    font-family: Consolas, monaco, monospace; font-size: 18px;
+    color: #181818;
+    font-weight: bold;
+	line-height: 32px;
+}
+
 #timestamp {
 	position: absolute;
     right: 8px;
