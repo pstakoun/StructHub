@@ -211,3 +211,19 @@ h4 {
     max-height: 256px;
     resize: vertical;
 }
+
+#content > #teams > #addMember {
+	float: left;
+	margin-bottom: 16px;
+	padding: 8px;
+	width: 184px;
+	word-wrap: break-word;
+}
+
+#content > #teams > #removeMember {
+	float: left;
+	margin-bottom: 16px;
+	padding: 8px;
+	width: 184px;
+	word-wrap: break-word;
+}
