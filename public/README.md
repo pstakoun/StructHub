@@ -1,3 +1,0 @@
-SocialNetwork
-=============
-A social network.
