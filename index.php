@@ -1,30 +1,15 @@
 <?php
-    session_start();
-	// Check for session
-    if (!isset($_SESSION["id"])) {
-        header("Location: login.php");
-        die();
-    }
-	$id = $_SESSION["id"];
-	
-	$errorMessage = "";
-	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-	}
-	
+	// Import util functions
+    require("util.php");
+
+	checkSession();
+	dbConnect();
+
 	// Set up feeds
-	$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
-	$stmt->bindParam(":id", $id);
-	$stmt->execute();
-	$result = $stmt->fetchAll();
-	$row = $result[0];
-	$primaryfeed = $row["primaryfeed"];
-	$secondaryfeed = $row["secondaryfeed"];
-	
+	$result = userFromID($id);
+	$primaryfeed = $result["primaryfeed"];
+	$secondaryfeed = $result["secondaryfeed"];
+
 	// Post status update if set
     if (isset($_POST["statusUpdate"])) {
         $statusUpdate = nl2br(htmlspecialchars($_POST["statusUpdate"]));
@@ -36,36 +21,15 @@
 			$stmt->bindParam(":statusUpdate", $statusUpdate);
 			$stmt->execute();
 			$postMessage = "<p id=\"label\">Status update successful.</p>";
-        } else if (empty($errorMessage)) {
-			$errorMessage = "<p id=\"error\">Please enter a valid status update.</p>";
+        } else {
+			setError("Please enter a valid status update.");
 		}
     }
-	
-	// PRG
-	if ($_POST) {
-		header("Location: " . $_SERVER['REQUEST_URI']);
-		die();
-	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div id="titleBarLogo">
-					<a href="#"><img src="images/logo.png" width=32px height=32px></a>
-				</div>
-                <?php include_once("menu.php"); ?>
-			</div>
-		</div>
-		
+	prg();
+
+	echoHeader(1);
+?>
         <div id="content">
             <form id="updateStatus" method="post" action="#">
 				<?php
@@ -81,7 +45,7 @@
                 <textarea id="statusText" name="statusUpdate" placeholder="Enter status update..."></textarea><br>
                 <input type="submit" name="postStatusUpdate" value="Post" />
             </form>
-            
+
 			<div id="primaryFeed">
 				<?php
 					// Display primary feed
@@ -93,7 +57,7 @@
 							include_once("messagefeed.php");
 							break;
 						default:
-							echo($errorMessage);
+							// TODO set primary feed to news
 					}
 				?>
 			</div>
@@ -109,11 +73,11 @@
 							include_once("messagefeed.php");
 							break;
 						default:
-							echo($errorMessage);
+							// TODO set secondary feed to messages
 					}
 				?>
 			</div>
-			
+
         </div>
 	</body>
 </html>

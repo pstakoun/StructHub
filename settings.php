@@ -1,43 +1,21 @@
 <?php
-    session_start();
-	// Check for session
-    if (!isset($_SESSION["id"])) {
-        header("Location: login.php");
-        die();
-    }
+	// Import util functions
+    require("util.php");
+
+	checkSession();
+
 	// Check for logout
     if (isset($_POST["logout"])) {
         session_unset();
-        session_destroy(); 
+        session_destroy();
         header("Location: login.php");
         die();
     }
-	
-	// PRG
-	if ($_POST) {
-		header("Location: " . $_SERVER['REQUEST_URI']);
-		die();
-	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
-				</div>
-                <?php include_once("menu.php"); ?>
-			</div>
-		</div>
-		
+	prg();
+    
+    echoHeader(1);
+?>
         <div id="content">
             <div id = "settings">
                 <form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
@@ -45,6 +23,6 @@
                 </form>
             </div>
         </div>
-        
+
 	</body>
 </html>

@@ -1,32 +1,22 @@
 <?php
-	session_start();
-	// Check for session
-	if (isset($_SESSION["id"])) {
-		header("Location: index.php");
-		die();
-	}
-	
-	ob_start();
-	
+	// Import util functions
+	require("util.php");
+
+	checkEmptySession();
+
 	// Import library for backwards compatibility
 	require("lib/password.php");
-	
+
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
-	
-	$errorMessage = "";
+
+	dbConnect();
+
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
 		unset($_SESSION["errorMessage"]);
 	}
-	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-	}
-	
+
 	// Initialize registration validity
 	$postValid = True;
 	if (empty($_POST)) {
@@ -38,13 +28,13 @@
 		$email = htmlspecialchars($_POST["email"]);
 		$password = htmlspecialchars($_POST["password"]);
 		$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
-		
+
 		// Check for email in database
 		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
 		$stmt->bindParam(":email", $email);
 		$stmt->execute();
 		$result = $stmt->fetchAll();
-		
+
 		// Validate name
 		if (empty($firstname) || empty($lastname) || ctype_space($firstname) || ctype_space($lastname)) {
 			$postValid = False;
@@ -67,25 +57,9 @@
 			$errorMessage = "<p id=\"error\">Email in use.</p>";
 		}
 	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div>
-                    <h1>StructHub</h1>
-                </div>
-			</div>
-		</div>
-		
+	echoHeader(0);
+?>
 		<div id="form">
 			<?php
 				if (isset($_SESSION["successMessage"])) {
@@ -126,7 +100,7 @@
 						// Capitalize name
 						$firstname = ucfirst($firstname);
 						$lastname = ucfirst($lastname);
-						
+
 						// Ensure id is unique
 						$id = uniqid("", true);
 						$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
@@ -138,7 +112,7 @@
 							$stmt->execute();
 							$result = $stmt->fetchAll();
 						}
-						
+
 						// Ensure username is unique
 						$fn = strtolower(preg_replace("/[^a-z]/i", "", $firstname));
 						$ln = strtolower(preg_replace("/[^a-z]/i", "", $lastname));
@@ -153,10 +127,10 @@
 							$stmt->execute();
 							$result = $stmt->fetchAll();
 						}
-						
+
 						// Hash password
 						$passwordhash = password_hash($password, PASSWORD_DEFAULT);
-						
+
 						// Create user
 						$stmt = $conn->prepare("INSERT INTO users (id, username, firstname, lastname, email, password) VALUES (:id, :username, :firstname, :lastname, :email, :password)");
 						$stmt->bindParam(":id", $id);
@@ -166,7 +140,7 @@
 						$stmt->bindParam(":email", $email);
 						$stmt->bindParam(":password", $passwordhash);
 						$stmt->execute();
-						
+
 						// Ensure key is unique
 						$key = uniqid();
 						$stmt = $conn->prepare("SELECT * FROM confirmations WHERE confirmkey = :key");
@@ -178,13 +152,13 @@
 							$stmt->execute();
 							$result = $stmt->fetchAll();
 						}
-						
+
 						// Create confirmation key
 						$stmt = $conn->prepare("INSERT INTO confirmations (id, confirmkey) VALUES (:id, :key)");
 						$stmt->bindParam(":id", $id);
 						$stmt->bindParam(":key", $key);
 						$stmt->execute();
-						
+
 						// PRG
 						if (!empty($errorMessage)) {
 							$_SESSION["errorMessage"] = $errorMessage;
@@ -200,7 +174,7 @@
 								</html>
 							";
 							$altmessage = "Use this link to confirm your StructHub account: http://structhub.com/confirm.php?id=" . $key;
-							
+
 							$mail = new PHPMailer();
                             //$mail->SMTPAuth = false;
                             //$mail->SMTPSecure = "ssl";
@@ -221,6 +195,7 @@
 								$_SESSION["successMessage"] = $mail->ErrorInfo;
 							}
 						}
+						// PRG
 						header("Location: " . $_SERVER['REQUEST_URI']);
 						die();
 					}

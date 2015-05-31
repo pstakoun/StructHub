@@ -1,38 +1,28 @@
 <?php
-	session_start();
-	// Check for session
-	if (isset($_SESSION["id"])) {
-		header("Location: index.php");
-		die();
-	}
-	
-	ob_start();
-	
+	// Import util functions
+	require("util.php");
+
+	checkEmptySession();
+
 	// Import library for backwards compatibility
 	require("lib/password.php");
-	
+
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
-	
-	$errorMessage = "";
+
+	dbConnect();
+
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
 		unset($_SESSION["errorMessage"]);
 	}
-	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-	}
-	
+
 	$passwordValid = True;
 	if (isset($_POST["id"]) && isset($_POST["password"]) && isset($_POST["confirmpassword"])) {
-		$id = $_POST["id"];
-		$password = $_POST["password"];
-		$confirmpassword = $_POST["confirmpassword"];
-		
+		$id = htmlspecialchars($_POST["id"]);
+		$password = htmlspecialchars($_POST["password"]);
+		$confirmpassword = htmlspecialchars($_POST["confirmpassword"]);
+
 		// Validate password
 		if (strlen($password) < 6) {
 			$passwordValid = False;
@@ -42,17 +32,17 @@
 			$passwordValid = False;
 			$errorMessage = "<p id=\"error\">Passwords do not match.</p>";
 		}
-		
+
 		if ($passwordValid) {
 			// Hash password
 			$passwordhash = password_hash($password, PASSWORD_DEFAULT);
-			
+
 			// Update password
 			$stmt = $conn->prepare("UPDATE users SET password = :password WHERE id = :id");
 			$stmt->bindParam(":password", $passwordhash);
 			$stmt->bindParam(":id", $id);
 			$stmt->execute();
-			
+
 			unset($_SESSION["resetid"]);
 			// PRG
 			$_SESSION["successMessage"] = "<p id=\"label\">Your password has been changed.</p>";
@@ -60,19 +50,15 @@
 			die();
 		}
 	}
-	
+
 	// Initialize email validity
 	$emailValid = False;
 	if (isset($_POST["email"])) {
 		// Get email
 		$email = htmlspecialchars($_POST["email"]);
-		
-		// Check for email in database
-		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-		$stmt->bindParam(":email", $email);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		
+
+		$result = userFromEmail($email);
+
 		// Check if email exists
 		if (empty($result)) {
 			$emailValid = False;
@@ -81,25 +67,9 @@
 			$emailValid = True;
 		}
 	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div>
-                    <h1>StructHub</h1>
-                </div>
-			</div>
-		</div>
-		
+	echoHeader(0);
+?>
 		<div id="form">
 			<?php
 				if (isset($_SESSION["successMessage"])) {
@@ -108,15 +78,15 @@
 				} else {
 					// Check for reset id
 					if (isset($_GET["id"])) {
-						$key = $_GET["id"];
+						$key = htmlspecialchars($_GET["id"]);
 						$stmt = $conn->prepare("SELECT * FROM passwordresets WHERE resetkey = :key");
 						$stmt->bindParam(":key", $key);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
-						
+						$result = $stmt->fetch();
+
 						// Check if id valid
 						if (!empty($result)) {
-							$id = htmlspecialchars($result[0]["id"]);
+							$id = htmlspecialchars($result["id"]);
 							$_SESSION["resetid"] = $id; ?>
 							<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
 								<table style="margin: 0 auto;">
@@ -185,32 +155,27 @@
 							</table>
 						</form>
 			<?php 	} else {
-						// Get user id from email
-						$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-						$stmt->bindParam(":email", $email);
-						$stmt->execute();
-						$result = $stmt->fetchAll();
-						$row = $result[0];
-						$id = $row["id"];
-						
+						$result = userFromEmail($email);
+						$id = $result["id"];
+
 						// Ensure key is unique
 						$key = uniqid();
 						$stmt = $conn->prepare("SELECT * FROM passwordresets WHERE resetkey = :key");
 						$stmt->bindParam(":key", $key);
 						$stmt->execute();
-						$result = $stmt->fetchAll();
+						$result = $stmt->fetch();
 						while (!empty($result)) {
 							$key = uniqid();
 							$stmt->execute();
-							$result = $stmt->fetchAll();
+							$result = $stmt->fetch();
 						}
-						
+
 						// Create reset key
 						$stmt = $conn->prepare("INSERT INTO passwordresets (id, resetkey) VALUES (:id, :key)");
 						$stmt->bindParam(":id", $id);
 						$stmt->bindParam(":key", $key);
 						$stmt->execute();
-						
+
 						// PRG
 						if (!empty($errorMessage)) {
 							$_SESSION["errorMessage"] = $errorMessage;
@@ -226,7 +191,7 @@
 								</html>
 							";
 							$altmessage = "Use this link to reset your StructHub password. It will be valid for 24 hours: http://structhub.com/recover.php?id=" . $key;
-							
+
 							$mail = new PHPMailer();
                             //$mail->SMTPAuth = false;
                             //$mail->SMTPSecure = "ssl";

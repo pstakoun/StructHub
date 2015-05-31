@@ -1,56 +1,54 @@
 <?php
-	session_start();
-	// Check for session
-	if (isset($_SESSION["id"])) {
-		header("Location: index.php");
-		die();
-	}
-	
-	ob_start();
-	
+	// Import util functions
+	require("util.php");
+
+	checkEmptySession();
+
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
-	
+
 	$errorMessage = "";
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
 		unset($_SESSION["errorMessage"]);
 	}
-	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
+
+	dbConnect();
+
+	if (empty($_SESSION["successMessage"]) && !empty($id)) {
+		// Confirm account
+		$stmt = $conn->prepare("UPDATE users SET confirmed = 1 WHERE id = :id");
+		$stmt->bindParam(":id", $id);
+		$stmt->execute();
+
+		// PRG
+		$_SESSION["successMessage"] = "<p id=\"label\">Confirmation successful. You can now log in to your account.</p>";
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		die();
 	}
-	
-	$id = null;
+
 	// Check if email set
 	if (isset($_POST["email"])) {
 		// Get email
 		$email = htmlspecialchars($_POST["email"]);
-		
-		// Check for email in database
-		$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-		$stmt->bindParam(":email", $email);
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		
+
+		$result = userFromEmail($email);
+
 		// Check if email exists
 		if (empty($result)) {
 			$errorMessage = "<p id=\"error\">Email not found.</p>";
-		} else if ($result[0]["confirmed"] == 1) {
+		} else if ($result["confirmed"] == 1) {
 			$errorMessage = "<p id=\"error\">Account already confirmed.</p>";
 		} else {
-			$id = $result[0]["id"];
-			
+			$id = $result["id"];
+
 			$stmt = $conn->prepare("SELECT * FROM confirmations WHERE id = :id");
 			$stmt->bindParam(":id", $id);
 			$stmt->execute();
 			$result = $stmt->fetchAll();
-			$key = "";
+			$key;
 			if (!empty($result)) {
-				$key = $result[0]["confirmkey"];
+				$key = $result["confirmkey"];
 			} else {
 				// Ensure key is unique
 				$key = uniqid();
@@ -63,14 +61,14 @@
 					$stmt->execute();
 					$result = $stmt->fetchAll();
 				}
-				
+
 				// Create confirmation key
 				$stmt = $conn->prepare("INSERT INTO confirmations (id, confirmkey) VALUES (:id, :key)");
 				$stmt->bindParam(":id", $id);
 				$stmt->bindParam(":key", $key);
 				$stmt->execute();
 			}
-			
+
 			// Send confirmation email
 			$subject = "StructHub Account Confirmation";
 			$message = "
@@ -82,7 +80,7 @@
 				</html>
 			";
 			$altmessage = "Use this link to confirm your StructHub account: http://structhub.com/confirm.php?id=" . $key;
-			
+
 			$mail = new PHPMailer();
 			//$mail->SMTPAuth = false;
 			//$mail->SMTPSecure = "ssl";
@@ -106,52 +104,26 @@
 	}
 	// Check if confirmation key set
 	else if (isset($_GET["id"])) {
-		$key = $_GET["id"];
+		$key = htmlspecialchars($_GET["id"]);
 		$stmt = $conn->prepare("SELECT * FROM confirmations WHERE confirmkey = :key");
 		$stmt->bindParam(":key", $key);
 		$stmt->execute();
-		$result = $stmt->fetchAll();
-		
+		$result = $stmt->fetch();
+
 		// Check if id valid
 		if (!empty($result)) {
-			$id = htmlspecialchars($result[0]["id"]);
+			$id = htmlspecialchars($result["id"]);
 		}
 	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div>
-                    <h1>StructHub</h1>
-                </div>
-			</div>
-		</div>
-		
+	echoHeader(0);
+?>
 		<div id="form">
 			<?php
 				if (isset($_SESSION["successMessage"])) {
 					echo($_SESSION["successMessage"]);
 					unset($_SESSION["successMessage"]);
-				} else if (!empty($id)) {
-					// Confirm account
-					$stmt = $conn->prepare("UPDATE users SET confirmed = 1 WHERE id = :id");
-					$stmt->bindParam(":id", $id);
-					$stmt->execute();
-					
-					// PRG
-					$_SESSION["successMessage"] = "<p id=\"label\">Confirmation successful. You can now log in to your account.</p>";
-					header("Location: " . $_SERVER["PHP_SELF"]);
-					die();
-				} else { ?>
+				} else if (empty($id)) { ?>
 					<form method="post" action=<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>>
 						<table style="margin: 0 auto;">
 							<?php if (!empty($errorMessage)) { echo("<tr><td colspan=\"3\">" . $errorMessage . "</td></tr>"); } ?>

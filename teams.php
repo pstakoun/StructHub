@@ -1,16 +1,10 @@
 <?php
-    session_start();
-	// Check for session
-    if (!isset($_SESSION["id"])) {
-        header("Location: login.php");
-        die();
-    }
-	$id = $_SESSION["id"];
-	
-	ob_start();
-	
-	$errorMessage = "";
-	
+	// Import util functions
+    require("util.php");
+
+	checkSession();
+	dbConnect();
+
 	// Initialize creation validity
 	$postValid = True;
 	$name = "";
@@ -21,29 +15,22 @@
 		// Get submitted information
 		$name = htmlspecialchars($_POST["name"]);
 		$description = htmlspecialchars($_POST["description"]);
-		
+
 		// Validate name
 		if (empty($name) || ctype_space($name)) {
 			$postValid = False;
 			$errorMessage = "<p id=\"error\">Name invalid.</p>";
 		}
 	}
-	
+
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
 		unset($_SESSION["errorMessage"]);
 	}
-	// Connect to database
-	try {
-		$conn = new PDO("mysql:host=structhubdb.db.11405843.hostedresource.com;dbname=structhubdb", "structhubdb", "Cx!ak#Unm6Bknn54");
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	} catch(PDOException $e) {
-		$errorMessage = "<p id=\"error\">Could not connect to database.</p>";
-	}
-	
+
 	$teams = [];
 	$invitations = [];
-	
+
 	// Get teams
 	$stmt = $conn->prepare("SELECT * FROM teammembers WHERE member = :id AND status = 2");
 	$stmt->bindParam(":id", $id);
@@ -52,7 +39,7 @@
 	foreach ($result as $row) {
 		$teams[] = $row["team"];
 	}
-	
+
 	// Get received invitations
 	$stmt = $conn->prepare("SELECT * FROM teammembers WHERE member = :id AND status = 1");
 	$stmt->bindParam(":id", $id);
@@ -61,26 +48,9 @@
 	foreach ($result as $row) {
 		$invitations[] = $row["team"];
 	}
-?>
 
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>StructHub</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	
-	<body>
-		<div id="titleBar">
-			<div id="titleBarWrap">
-				<div id="titleBarLogo">
-					<a href="index.php"><img src="images/logo.png" width=32px height=32px></a>
-				</div>
-                <?php include_once("menu.php"); ?>
-			</div>
-		</div>
-		
+    echoHeader(1);
+?>
         <div id="content">
             <div id="teams">
 				<?php
@@ -124,7 +94,7 @@
 										$stmt->execute();
 										$result = $stmt->fetchAll();
 									}
-									
+
 									// Create team
 									$stmt = $conn->prepare("INSERT INTO teams (id, name, description, owner) VALUES (:teamid, :name, :description, :id)");
 									$stmt->bindParam(":teamid", $teamid);
@@ -132,7 +102,7 @@
 									$stmt->bindParam(":description", $description);
 									$stmt->bindParam(":id", $id);
 									$stmt->execute();
-									
+
 									// Add user to team
 									$s = 2;
 									$stmt = $conn->prepare("INSERT INTO teammembers (member, team, status) VALUES (:id, :teamid, :status)");
@@ -140,9 +110,9 @@
 									$stmt->bindParam(":teamid", $teamid);
 									$stmt->bindParam(":status", $s);
 									$stmt->execute();
-									
+
 									$_SESSION["successMessage"] = "<p id=\"label\">Team successfully created.</p>";
-									
+
 									header("Location: " . $_SERVER['REQUEST_URI']);
 								}
 							}
@@ -174,7 +144,7 @@
 											foreach ($result as $row) {
 												$contacts[] = $row["user1"];
 											}
-											
+
 											// Find team members
 											$members = [];
 											$stmt = $conn->prepare("SELECT * FROM teammembers WHERE team = :team");
@@ -184,7 +154,7 @@
 											foreach ($result as $row) {
 												$members[] = $row["member"];
 											}
-											
+
 											// Add user if requested
 											if (!empty($_GET["user"])) {
 												$un = htmlspecialchars($_GET["user"]);
@@ -204,7 +174,7 @@
 														$stmt->bindParam(":team", $team);
 														$stmt->bindParam(":status", $s);
 														$stmt->execute();
-														
+
 														// Update team members
 														$members = [];
 														$stmt = $conn->prepare("SELECT * FROM teammembers WHERE team = :team");
@@ -217,7 +187,7 @@
 													}
 												}
 											}
-											
+
 											foreach ($contacts as $user) {
 												if (!in_array($user, $members)) {
 													// Get user information from id
@@ -256,7 +226,7 @@
 											foreach ($result as $row) {
 												$contacts[] = $row["user1"];
 											}
-											
+
 											// Find team members
 											$members = [];
 											$stmt = $conn->prepare("SELECT * FROM teammembers WHERE team = :team");
@@ -266,7 +236,7 @@
 											foreach ($result as $row) {
 												$members[] = $row["member"];
 											}
-											
+
 											// Remove user if requested
 											if (!empty($_GET["user"])) {
 												$un = htmlspecialchars($_GET["user"]);
@@ -284,7 +254,7 @@
 														$stmt->bindParam(":team", $team);
 														$stmt->bindParam(":u", $u);
 														$stmt->execute();
-														
+
 														// Update team members
 														$members = [];
 														$stmt = $conn->prepare("SELECT * FROM teammembers WHERE team = :team");
@@ -297,7 +267,7 @@
 													}
 												}
 											}
-											
+
 											foreach ($members as $user) {
 												// Get user information from id
 												$stmt = $conn->prepare("SELECT * FROM users WHERE id = :user");
@@ -347,7 +317,7 @@
 								echo("<input type=\"hidden\" name=\"id\" value=\"new\" />");
 								echo("<input type=\"submit\" value=\"Create Team\" />");
 							echo("</form>");
-							
+
 							// Display received invitations
 							if (!empty($invitations)) {
 								echo("<h3>Invitations</h3>");
@@ -357,12 +327,11 @@
 								$stmt = $conn->prepare("SELECT * FROM teams WHERE id = :t");
 								$stmt->bindParam(":t", $t);
 								$stmt->execute();
-								$result = $stmt->fetchAll();
-								$row = $result[0];
+								$result = $stmt->fetch();
 								// Display team
-								echo("<a id=\"team\" href=\"teams.php?id=" . $row["id"] . "\">" . $row["name"] . "</a><br>");
+								echo("<a id=\"team\" href=\"teams.php?id=" . $result["id"] . "\">" . $result["name"] . "</a><br>");
 							}
-							
+
 							// Display teams
 							if (!empty($teams)) {
 								echo("<h3>Your Teams</h3>");
@@ -372,15 +341,14 @@
 								$stmt = $conn->prepare("SELECT * FROM teams WHERE id = :t");
 								$stmt->bindParam(":t", $t);
 								$stmt->execute();
-								$result = $stmt->fetchAll();
-								$row = $result[0];
+								$result = $stmt->fetch();
 								// Display team
-								echo("<a id=\"team\" href=\"teams.php?id=" . $row["id"] . "\">" . $row["name"] . "</a><br>");
+								echo("<a id=\"team\" href=\"teams.php?id=" . $result["id"] . "\">" . $result["name"] . "</a><br>");
 							}
 						}
 					} ?>
             </div>
         </div>
-            
+
 	</body>
 </html>

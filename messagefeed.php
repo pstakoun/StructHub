@@ -5,7 +5,7 @@
 	$stmt->bindParam(":id", $id);
 	$stmt->execute();
 	$messages = $stmt->fetchAll();
-	
+
 	// Show messages
 	if (!empty($messages)) {
 		$stmt = $conn->prepare("SELECT * FROM users WHERE id = :sender");
@@ -13,13 +13,12 @@
 		foreach ($messages as $message) {
 			$stmt->bindParam(":sender", $message["sender"]);
 			$stmt->execute();
-			$result = $stmt->fetchAll();
-			$sender = $result[0];
+			$result = $stmt->fetch();
 			$timestamp = $message["datecreated"];
-			
+
 			// Display message
 			echo("<div id=\"message\">");
-				echo("<a id=\"user\" href=\"user.php?id=" . $sender["username"] . "\">" . $sender["firstname"] . " " . $sender["lastname"] . "</a>");
+				echo("<a id=\"user\" href=\"user.php?id=" . $result["username"] . "\">" . $result["firstname"] . " " . $result["lastname"] . "</a>");
 				echo("<div id=\"timestamp\">" . $timestamp . "</div>");
 				echo("<p id=\"messageText\">" . $message["message"] . "</p>");
 			echo("</div>");
