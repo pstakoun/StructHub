@@ -1,15 +1,12 @@
 <?php
 	// Import util functions
 	require("util.php");
-
-	checkEmptySession();
-
 	// Import library for backwards compatibility
 	require("lib/password.php");
-
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
 
+	checkEmptySession();
 	dbConnect();
 
 	if (isset($_SESSION["errorMessage"])) {

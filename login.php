@@ -1,18 +1,16 @@
 <?php
 	// Import util functions
     require("util.php");
+    // Import password library for backwards compatibility
+    require("lib/password.php");
 
     checkEmptySession();
-
-    // Import password library for backwards compatibility
-	require("lib/password.php");
+    dbConnect();
 
 	if (!empty($_POST)) {
 		// Get submitted email and password
         $email = htmlspecialchars($_POST["email"]);
         $password = htmlspecialchars($_POST["password"]);
-
-		dbConnect();
 
 		$result = userFromEmail($email);
 
