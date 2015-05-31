@@ -1,19 +1,16 @@
 <?php
 	// Import util functions
 	require("util.php");
-
-	checkEmptySession();
-
 	// Import mailer
 	require("lib/PHPMailer/PHPMailerAutoload.php");
 
-	$errorMessage = "";
+	checkEmptySession();
+	dbConnect();
+
 	if (isset($_SESSION["errorMessage"])) {
 		$errorMessage = $_SESSION["errorMessage"];
 		unset($_SESSION["errorMessage"]);
 	}
-
-	dbConnect();
 
 	if (empty($_SESSION["successMessage"]) && !empty($id)) {
 		// Confirm account
