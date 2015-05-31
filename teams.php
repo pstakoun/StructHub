@@ -122,28 +122,13 @@
 								$stmt = $conn->prepare("SELECT * FROM teams WHERE id = :team");
 								$stmt->bindParam(":team", $team);
 								$stmt->execute();
-								$result = $stmt->fetchAll();
+								$result = $stmt->fetch();
 								if (!empty($result)) {
-									$row = $result[0];
-									echo("<h2>" . $row["name"] . "</h2>");
-									if (!empty($_GET["action"]) && $row["owner"] == $id && ($_GET["action"] == "add" || $_GET["action"] == "remove")) {
+									echo("<h2>" . $result["name"] . "</h2>");
+									if (!empty($_GET["action"]) && $result["owner"] == $id && ($_GET["action"] == "add" || $_GET["action"] == "remove")) {
 										if ($_GET["action"] == "add") {
 											// Find contacts
-											$contacts = [];
-											$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 2");
-											$stmt->bindParam(":id", $id);
-											$stmt->execute();
-											$result = $stmt->fetchAll();
-											foreach ($result as $row) {
-												$contacts[] = $row["user2"];
-											}
-											$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 2");
-											$stmt->bindParam(":id", $id);
-											$stmt->execute();
-											$result = $stmt->fetchAll();
-											foreach ($result as $row) {
-												$contacts[] = $row["user1"];
-											}
+											$contacts = getContacts($id);
 
 											// Find team members
 											$members = [];
@@ -158,14 +143,9 @@
 											// Add user if requested
 											if (!empty($_GET["user"])) {
 												$un = htmlspecialchars($_GET["user"]);
-												// Get id from username
-												$stmt = $conn->prepare("SELECT * FROM users WHERE username = :un");
-												$stmt->bindParam(":un", $un);
-												$stmt->execute();
-												$result = $stmt->fetchAll();
+												$result = userFromUsername($un);
 												if (!empty($result)) {
-													$row = $result[0];
-													$u = $row["id"];
+													$u = $result["id"];
 													if (in_array($u, $contacts) && !in_array($u, $members)) {
 														// Add user to team
 														$s = 2;
@@ -190,19 +170,14 @@
 
 											foreach ($contacts as $user) {
 												if (!in_array($user, $members)) {
-													// Get user information from id
-													$stmt = $conn->prepare("SELECT * FROM users WHERE id = :user");
-													$stmt->bindParam(":user", $user);
-													$stmt->execute();
-													$result = $stmt->fetchAll();
-													$row = $result[0];
-													$name = $row["firstname"] . " " . $row["lastname"];
+													$result = userFromID($user);
+													$name = $result["firstname"] . " " . $result["lastname"];
 													echo("<div id=addMember>");
-													echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+													echo("<a id=\"user\" href=\"user.php?id=" . $result["username"] . "\">" . $name . "</a>");
 													echo("<form method=\"get\" action=teams.php>");
 														echo("<input type=\"hidden\" name=\"id\" value=\"" . $team . "\" />");
 														echo("<input type=\"hidden\" name=\"action\" value=\"add\" />");
-														echo("<input type=\"hidden\" name=\"user\" value=\"" . $row["username"] . "\" />");
+														echo("<input type=\"hidden\" name=\"user\" value=\"" . $result["username"] . "\" />");
 														echo("<input type=\"submit\" value=\"Add Member\" />");
 													echo("</form>");
 													echo("</div>");
@@ -211,21 +186,7 @@
 										}
 										else if ($_GET["action"] == "remove") {
 											// Find contacts
-											$contacts = [];
-											$stmt = $conn->prepare("SELECT * FROM contacts WHERE user1 = :id AND status = 2");
-											$stmt->bindParam(":id", $id);
-											$stmt->execute();
-											$result = $stmt->fetchAll();
-											foreach ($result as $row) {
-												$contacts[] = $row["user2"];
-											}
-											$stmt = $conn->prepare("SELECT * FROM contacts WHERE user2 = :id AND status = 2");
-											$stmt->bindParam(":id", $id);
-											$stmt->execute();
-											$result = $stmt->fetchAll();
-											foreach ($result as $row) {
-												$contacts[] = $row["user1"];
-											}
+											$contacts = getContacts($id);
 
 											// Find team members
 											$members = [];
@@ -240,14 +201,9 @@
 											// Remove user if requested
 											if (!empty($_GET["user"])) {
 												$un = htmlspecialchars($_GET["user"]);
-												// Get id from username
-												$stmt = $conn->prepare("SELECT * FROM users WHERE username = :un");
-												$stmt->bindParam(":un", $un);
-												$stmt->execute();
-												$result = $stmt->fetchAll();
+												$result = userFromUsername($un);
 												if (!empty($result)) {
-													$row = $result[0];
-													$u = $row["id"];
+													$u = $result["id"];
 													if (in_array($u, $members)) {
 														// Remove user from team
 														$stmt = $conn->prepare("DELETE FROM teammembers WHERE team = :team AND member = :u");
@@ -269,19 +225,14 @@
 											}
 
 											foreach ($members as $user) {
-												// Get user information from id
-												$stmt = $conn->prepare("SELECT * FROM users WHERE id = :user");
-												$stmt->bindParam(":user", $user);
-												$stmt->execute();
-												$result = $stmt->fetchAll();
-												$row = $result[0];
-												$name = $row["firstname"] . " " . $row["lastname"];
+												$result = userFromID($user);
+												$name = $result["firstname"] . " " . $result["lastname"];
 												echo("<div id=removeMember>");
-												echo("<a id=\"user\" href=\"user.php?id=" . $row["username"] . "\">" . $name . "</a>");
+												echo("<a id=\"user\" href=\"user.php?id=" . $result["username"] . "\">" . $name . "</a>");
 												echo("<form method=\"get\" action=teams.php>");
 													echo("<input type=\"hidden\" name=\"id\" value=\"" . $team . "\" />");
 													echo("<input type=\"hidden\" name=\"action\" value=\"remove\" />");
-													echo("<input type=\"hidden\" name=\"user\" value=\"" . $row["username"] . "\" />");
+													echo("<input type=\"hidden\" name=\"user\" value=\"" . $result["username"] . "\" />");
 													echo("<input type=\"submit\" value=\"Remove Member\" />");
 												echo("</form>");
 												echo("</div>");
@@ -289,7 +240,7 @@
 										}
 									}
 									else {
-										if ($row["owner"] == $id) {
+										if ($result["owner"] == $id) {
 											// Add contact to team
 											echo("<form style=\"float:left\" method=\"get\" action=teams.php>");
 												echo("<input type=\"hidden\" name=\"id\" value=\"" . $team . "\" />");
@@ -303,7 +254,7 @@
 												echo("<input type=\"submit\" value=\"Remove Member\" />");
 											echo("</form>");
 										}
-										echo("<p id=\"label\">" . $row["description"] . "</p>");
+										echo("<p id=\"label\">" . $result["description"] . "</p>");
 									}
 								}
 								else {
